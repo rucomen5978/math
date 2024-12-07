@@ -223,7 +223,6 @@ void help() {
 	cout << "Из неправильной дроби в правильную -> itm" << endl;
 	cout << "Найти делители числа -> fd" << endl;
 	cout << "Проверить на простое число -> fp" << endl;
-	cout << "Ссылка на оригинальный репозиторий в github -> github" << endl;
 }
 void debugfrac(Fraction frac1, Fraction frac2, Fraction result) {
 	cout << "frac1.fullpart:\t" << frac1.fullpart << endl;
@@ -820,11 +819,6 @@ void calcfraction2() {
 
 }
 }
-
-void github() {
-	system("")
-}
-
 void consolemenu() {
 	writeBottom("Режим: главное меню");
 	string input;
