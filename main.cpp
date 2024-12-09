@@ -15,6 +15,17 @@ struct Fraction {
 	int numerator = 0;
 	int denominator = 0;
 	int ntmb = 0;
+
+	void toImproperFraction() {
+		numerator = fullpart * denominator + numerator;
+		fullpart = 0;
+	}
+
+	void toMixedFraction() {
+		fullpart = numerator / denominator;
+		numerator %= denominator;
+	}
+
 };
 bool isPrime(int num) {
 	if (num <= 1) {
@@ -88,11 +99,6 @@ void writeBottom(string text) {
 	gotoxy(0, GetConsoleHeight());
 	cout << text;
 	gotoxy(x, y);
-	if (GetCursorY() == GetConsoleHeight()) {
-		gotoxy(GetCursorX(), 0);
-		system("cls");
-		
-	}
 }
 int centerX(int objectW, int windowW) {
 	return (windowW / 2) - (objectW / 2);
@@ -208,12 +214,15 @@ void help() {
 	cout << "Для визульного режима (для более новых пользователей) -> visual" << endl;
 	cout << "Для помощи выбора режима окна -> help window flag" << endl;
 	cout << "Для помощи выбора действий в калькуляторе процентов -> help calcperc" << endl;
+	cout << "Для помощи в калькуляторе дробей -> help calcfrac" << endl;
 	cout << "Для чистки всех сообщений -> clear" << endl;
 	cout << "Для выхода из программы -> exit" << endl;
+	cout << "Ссылка на оригинальный репозиторий в github -> github" << endl;
 	cout << endl << endl;
 	cout << "Режимы программы: " << endl;
 	cout << "Калькулятор -> calc" << endl;
 	cout << "Калькулятор процентов -> calcperc" << endl;
+	cout << "Калькулятор дробей без подсказок -> calfracwt" << endl;
 	cout << "Калькулятор дробей -> calcfrac" << endl;
 	cout << "Найти наибольший общий делитель -> gcd" << endl;
 	cout << "Найти наименьший общее кратное -> lcm" << endl;
@@ -223,6 +232,7 @@ void help() {
 	cout << "Из неправильной дроби в правильную -> itm" << endl;
 	cout << "Найти делители числа -> fd" << endl;
 	cout << "Проверить на простое число -> fp" << endl;
+
 }
 void debugfrac(Fraction frac1, Fraction frac2, Fraction result) {
 	cout << "frac1.fullpart:\t" << frac1.fullpart << endl;
@@ -234,6 +244,33 @@ void debugfrac(Fraction frac1, Fraction frac2, Fraction result) {
 	cout << "frac2.numerator:\t" << frac2.numerator << endl;
 	cout << "frac2.denominator:\t" << frac2.denominator << endl;
 	cout << "frac2.ntmb:\t\t" << frac2.ntmb << endl;
+	cout << endl;
+	cout << "result.fullpart:\t" << result.fullpart << endl;
+	cout << "result.numerator:\t" << result.numerator << endl;
+	cout << "result.denominator:\t" << result.denominator << endl;
+	cout << "result.ntmb:\t\t" << result.ntmb << endl;
+	cout << endl;
+}
+void debugmulfrac(Fraction frac1, Fraction frac2, Fraction wfrac1, Fraction wfrac2, Fraction result) {
+	cout << "frac1.fullpart:\t" << frac1.fullpart << endl;
+	cout << "frac1.numerator:\t" << frac1.numerator << endl;
+	cout << "frac1.denominator:\t" << frac1.denominator << endl;
+	cout << "frac1.ntmb:\t\t" << frac1.ntmb << endl;
+	cout << endl;
+	cout << "frac2.fullpart:\t" << frac2.fullpart << endl;
+	cout << "frac2.numerator:\t" << frac2.numerator << endl;
+	cout << "frac2.denominator:\t" << frac2.denominator << endl;
+	cout << "frac2.ntmb:\t\t" << frac2.ntmb << endl;
+	cout << endl;
+	cout << "wfrac1.fullpart:\t" << wfrac1.fullpart << endl;
+	cout << "wfrac1.numerator:\t" << wfrac1.numerator << endl;
+	cout << "wfrac1.denominator:\t" << wfrac1.denominator << endl;
+	cout << "wfrac1.ntmb:\t\t" << wfrac1.ntmb << endl;
+	cout << endl;
+	cout << "wfrac2.fullpart:\t" << wfrac2.fullpart << endl;
+	cout << "wfrac2.numerator:\t" << wfrac2.numerator << endl;
+	cout << "wfrac2.denominator:\t" << wfrac2.denominator << endl;
+	cout << "wfrac2.ntmb:\t\t" << wfrac2.ntmb << endl;
 	cout << endl;
 	cout << "result.fullpart:\t" << result.fullpart << endl;
 	cout << "result.numerator:\t" << result.numerator << endl;
@@ -506,7 +543,7 @@ void itm() {
 	cin >> num >> denom;
 	cout << improperToMixed(num, denom) << endl;
 }
-void calcfraction2() {
+void calcfraction2(bool writetext) {
 	writeBottom("Режим: калькулятор дробей");
 	Fraction frac1, frac2, result;
 	
@@ -516,25 +553,45 @@ void calcfraction2() {
 	char itm;
 	char debug;
 
-	cout << "frac1.fullpart: ";
+	if (writetext) {
+		cout << "frac1.fullpart: ";
+	}
 	cin >> frac1.fullpart;
-	cout << "frac1.numerator: ";
+	if (writetext) {
+		cout << "frac1.numerator: ";
+	}
 	cin >> frac1.numerator;
-	cout << "frac1.denominator: ";
+	if (writetext) {
+		cout << "frac1.denominator: ";
+	}
 	cin >> frac1.denominator;
-	cout << "action: ";
+	if (writetext) {
+		cout << "action: ";
+	}
 	cin >> action;
-	cout << "frac2.fullpart: ";
+	if (writetext) {
+		cout << "frac2.fullpart: ";
+	}
 	cin >> frac2.fullpart;
-	cout << "frac2.numerator: ";
+	if (writetext) {
+		cout << "frac2.numerator: ";
+	}
 	cin >> frac2.numerator;
-	cout << "frac2.denominator: ";
+	if (writetext) {
+		cout << "frac2.denominator: ";
+	}
 	cin >> frac2.denominator;
-	cout << "делать из неправильной дроби в правильную? (y, n): ";
+	if (writetext) {
+		cout << "делать из неправильной дроби в правильную? (y, n): ";
+	}
 	cin >> itm;
-	cout << "сокращать число? (y, n): ";
+	if (writetext) {
+		cout << "сокращать число? (y, n): ";
+	}
 	cin >> reduce;
-	cout << "включить режим отладки? (y, n): ";
+	if (writetext) {
+		cout << "включить режим отладки? (y, n): ";
+	}
 	cin >> debug;
 
 
@@ -812,13 +869,602 @@ void calcfraction2() {
 		}
 		//если включен перевод правильных дробей но выключено сокращение дробей
 		else if (itm == 'y' && reduce == 'n') {
-			
+			//делаем общий знаменатель
+			result.denominator = cd;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+
+			//проверка если числитель первой дроби меньше чем второй
+			if (frac1.numerator < frac2.numerator) {
+				//мы проверяем есть ли у нас целое число
+				if (frac1.fullpart >= 1) {
+					//если есть то занимаем у него единицу
+					frac1.fullpart--;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					//эту занятую единицу представляем в виде числителя
+					frac1.numerator += frac1.denominator;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+
+					//а потом уже отнимаем
+					result.numerator = frac1.numerator - frac2.numerator;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					//отнимаем целые числа
+					result.fullpart = frac1.fullpart - frac2.fullpart;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+
+					//int a = 41;
+					//int b = 35;
+					//int fakecounter = 0;
+					//int lnv = 0;
+					//while (a > 0) {
+					//	a -= b;
+					//	fakecounter++;
+					//}
+					//if (a + b > 0) {
+					//	lnv = (a + b);
+					//}
+					//int realcounter = fakecounter - 1;
+	
+					//cout << realcounter << " " << lnv;
+	
+					int fakecounter = 0;
+					int lnv = 0;
+					while (frac1.numerator > 0) {
+						frac1.numerator -= frac2.numerator;
+						fakecounter++;
+						if (debug == 'y')
+							debugfrac(frac1, frac2, result);
+					}
+					if (frac1.numerator + frac2.numerator > 0) {
+						lnv = (frac1.numerator + frac2.numerator);
+						if (debug == 'y')
+							debugfrac(frac1, frac2, result);
+					}
+					int realcounter = fakecounter - 1;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					result.fullpart += realcounter;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+
+
+					//и тут уже выводим
+					if (result.fullpart == 0) {
+						cout << result.numerator << "/" << result.denominator << endl;
+					}
+					else if (result.numerator == 0) {
+						cout << result.fullpart << endl;
+					}
+					else {
+						cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+					}
+
+				}
+			}
+			//если у нас первый числитель больше второго то
+			else {
+				result.numerator = frac1.numerator - frac2.numerator;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+				result.fullpart = frac1.fullpart - frac2.fullpart;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+				int fakecounter = 0;
+				int lnv = 0;
+				while (frac1.numerator > 0) {
+					frac1.numerator -= frac2.numerator;
+					fakecounter++;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+				}
+				if (frac1.numerator + frac2.numerator > 0) {
+					lnv = (frac1.numerator + frac2.numerator);
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+				}
+				int realcounter = fakecounter - 1;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+				result.fullpart += realcounter;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+
+
+				//и тут уже выводим
+				if (result.fullpart == 0) {
+					cout << result.numerator << "/" << result.denominator << endl;
+				}
+				else if (result.numerator == 0) {
+					cout << result.fullpart << endl;
+				}
+				else {
+					cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+				}
+			}
+		}
+		if (itm == 'n' && reduce == 'y') {
+			result.denominator = cd;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.numerator = frac1.numerator - frac2.numerator;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.fullpart = frac1.fullpart - frac2.fullpart;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			int gcdfrac = gcd(result.denominator, result.numerator);
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.denominator /= gcdfrac;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.numerator /= gcdfrac;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+		if (itm == 'y' && reduce == 'y') {
+			//делаем общий знаменатель
+			result.denominator = cd;
+
+			//проверка если числитель первой дроби меньше чем второй
+			if (frac1.numerator < frac2.numerator) {
+				//мы проверяем есть ли у нас целое число
+				if (frac1.fullpart >= 1) {
+					//если есть то занимаем у него единицу
+					frac1.fullpart--;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					//эту занятую единицу представляем в виде числителя
+					frac1.numerator += frac1.denominator;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+
+					//а потом уже отнимаем
+					result.numerator = frac1.numerator - frac2.numerator;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					//отнимаем целые числа
+					result.fullpart = frac1.fullpart - frac2.fullpart;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+
+					//int a = 41;
+					//int b = 35;
+					//int fakecounter = 0;
+					//int lnv = 0;
+					//while (a > 0) {
+					//	a -= b;
+					//	fakecounter++;
+					//}
+					//if (a + b > 0) {
+					//	lnv = (a + b);
+					//}
+					//int realcounter = fakecounter - 1;
+
+					//cout << realcounter << " " << lnv;
+
+					// Преобразование в правильную дробь после вычитания
+					if (result.numerator < 0) {
+						// Если числитель отрицательный, занимаем из целой части
+						result.fullpart -= 1; // Уменьшаем целую часть
+						if (debug == 'y')
+							debugfrac(frac1, frac2, result);
+						result.numerator += result.denominator; // Добавляем знаменатель к числителю
+						if (debug == 'y')
+							debugfrac(frac1, frac2, result);
+					}
+
+					// Приведение дроби к правильной форме
+					if (result.numerator >= result.denominator) {
+						result.fullpart += result.numerator / result.denominator;
+						if (debug == 'y')
+							debugfrac(frac1, frac2, result);
+						result.numerator %= result.denominator;
+						if (debug == 'y')
+							debugfrac(frac1, frac2, result);
+					}
+
+
+					int gcdfrac = gcd(result.denominator, result.numerator);
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					result.denominator /= gcdfrac;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					result.numerator /= gcdfrac;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+
+					//и тут уже выводим
+					if (result.fullpart == 0) {
+						cout << result.numerator << "/" << result.denominator << endl;
+					}
+					else if (result.numerator == 0) {
+						cout << result.fullpart << endl;
+					}
+					else {
+						cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+					}
+
+				}
+			}
+			//если у нас первый числитель больше второго то
+			else {
+				result.numerator = frac1.numerator - frac2.numerator;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+				result.fullpart = frac1.fullpart - frac2.fullpart;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+				// Преобразование в правильную дробь после вычитания
+				if (result.numerator < 0) {
+					// Если числитель отрицательный, занимаем из целой части
+					result.fullpart -= 1; // Уменьшаем целую часть
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					result.numerator += result.denominator; // Добавляем знаменатель к числителю
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+				}
+
+				// Приведение дроби к правильной форме
+				if (result.numerator >= result.denominator) {
+					result.fullpart += result.numerator / result.denominator;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+					result.numerator %= result.denominator;
+					if (debug == 'y')
+						debugfrac(frac1, frac2, result);
+				}
+
+
+				int gcdfrac = gcd(result.denominator, result.numerator);
+				result.denominator /= gcdfrac;
+if (debug == 'y')
+debugfrac(frac1, frac2, result);
+result.numerator /= gcdfrac;
+if (debug == 'y')
+debugfrac(frac1, frac2, result);
+
+//и тут уже выводим
+if (result.fullpart == 0) {
+	cout << result.numerator << "/" << result.denominator << endl;
+}
+else if (result.numerator == 0) {
+	cout << result.fullpart << endl;
+}
+else {
+	cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+}
+			}
+		}
+	}
+	//если мы умножаем дробь
+	else if (action == '*') {
+		//делаем дробь неправильной
+		Fraction wfrac1, wfrac2;
+		//проверяем есть ли у нас смешанная дробь
+		if (frac1.fullpart >= 1) {
+			wfrac1.numerator = frac1.denominator * frac1.fullpart + frac1.numerator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			wfrac1.denominator = frac1.denominator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+		}
+		else {
+			wfrac1 = frac1; // Если это не смешанная дробь
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+		}
+
+		if (frac2.fullpart >= 1) {
+			wfrac2.numerator = frac2.denominator * frac2.fullpart + frac2.numerator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			wfrac2.denominator = frac2.denominator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+		}
+		else {
+			wfrac2 = frac2; // Если это не смешанная дробь
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
 		}
 
 
+		//вторая неправильная дробь готова
 
+		//умножаем дроби друг на друга
+		//если нам не надо переводить обратно в правильную дробь и не надо сокращать
+		if (itm == 'n' && reduce == 'n') {
+			result.denominator = wfrac1.denominator * wfrac2.denominator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			result.numerator = wfrac1.numerator * wfrac2.numerator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+		//если нам надо переводить в правильную дробь и не надо сокращать
+		else if (itm == 'y' && reduce == 'n') {
+			result.denominator = wfrac1.denominator * wfrac2.denominator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			result.numerator = wfrac1.numerator * wfrac2.numerator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+
+			//// Преобразование в правильную дробь после вычитания
+			//if (result.numerator < 0) {
+			//	// Если числитель отрицательный, занимаем из целой части
+			//	result.fullpart -= 1; // Уменьшаем целую часть
+			//	result.numerator += result.denominator; // Добавляем знаменатель к числителю
+			//}
+
+			// Приведение дроби к правильной форме
+			if (result.numerator >= result.denominator) {
+				result.fullpart += result.numerator / result.denominator;
+				if (debug == 'y')
+					debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+				result.numerator %= result.denominator;
+				if (debug == 'y')
+					debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			}
+
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+		//если нам надо только сократить
+		else if (itm == 'n' && reduce == 'y') {
+			result.denominator = wfrac1.denominator * wfrac2.denominator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			result.numerator = wfrac1.numerator * wfrac2.numerator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			int gcdfrac = gcd(result.denominator, result.numerator);
+			result.denominator /= gcdfrac;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			result.numerator /= gcdfrac;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+		//если нам надо и сократить и перевести в правильную дробь
+		else if (itm == 'y' && reduce == 'y') {
+			result.denominator = wfrac1.denominator * wfrac2.denominator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			result.numerator = wfrac1.numerator * wfrac2.numerator;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+
+			// Преобразование в правильную дробь
+			if (result.numerator >= result.denominator) {
+				result.fullpart += result.numerator / result.denominator;
+				if (debug == 'y')
+					debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+				result.numerator %= result.denominator;
+				if (debug == 'y')
+					debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			}
+
+			// Сокращение дроби
+			int gcdfrac = gcd(result.denominator, result.numerator);
+			result.denominator /= gcdfrac;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+			result.numerator /= gcdfrac;
+			if (debug == 'y')
+				debugmulfrac(frac1, frac2, wfrac1, wfrac2, result);
+
+			// Вывод
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+	}
+	//если действие деление
+	else if (action == '/') {
+		//создаём не правильные дроби
+
+		//проверяем на наличие целой части
+		if (frac1.fullpart >= 1) {
+			frac1.toImproperFraction();
+		}
+		//делаем тоже самое со второй дробью
+		if (frac2.fullpart >= 1) {
+			frac2.toImproperFraction();
+		}
+
+		if (itm == 'n' && reduce == 'n') {
+			result.numerator = frac1.numerator * frac2.denominator;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.denominator = frac1.denominator * frac2.numerator;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+		if (itm == 'y' && reduce == 'n') {
+			result.numerator = frac1.numerator * frac2.denominator;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.denominator = frac1.denominator * frac2.numerator;
+
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+
+			if (result.numerator >= result.denominator) {
+				result.fullpart += result.numerator / result.denominator;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+				result.numerator %= result.denominator;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+			}
+
+
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+		if (itm == 'n' && reduce == 'y') {
+			result.numerator = frac1.numerator * frac2.denominator;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.denominator = frac1.denominator * frac2.numerator;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+
+			int gcdfrac = gcd(result.denominator, result.numerator);
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.denominator /= gcdfrac;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.numerator /= gcdfrac;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+		if (itm == 'y' && reduce == 'y') {
+			result.numerator = frac1.numerator * frac2.denominator;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.denominator = frac1.denominator * frac2.numerator;
+
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+
+			if (result.numerator >= result.denominator) {
+				result.fullpart += result.numerator / result.denominator;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+				result.numerator %= result.denominator;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+			}
+			int gcdfrac = gcd(result.denominator, result.numerator);
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.denominator /= gcdfrac;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+			result.numerator /= gcdfrac;
+			if (debug == 'y')
+				debugfrac(frac1, frac2, result);
+
+			if (result.fullpart == 0) {
+				cout << result.numerator << "/" << result.denominator << endl;
+			}
+			else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+			}
+			else {
+				cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+			}
+		}
+	}
 }
+
+void github() {
+	system("start https://github.com/rucomen5978/math");
 }
+void helpcalcfrac() {
+	cout << "Для правильной работы с дробями надо ввести 10 параметров" << endl;
+	cout << "Сначало вводим целую часть первой дроби, если её нет пишем 0" << endl;
+	cout << "Вводим числитель первой дроби" << endl;
+	cout << "Вводим знаментаель первой дроби" << endl;
+	cout << "Вводим знак действия (+, -, *, /)" << endl;
+	cout << "Вводим всё тоже самое для второй дроби только без знака действия" << endl;
+	cout << "Дальше у нас есть три параметра на выбор" << endl;
+	cout << "ОЧЕНЬ ВАЖНО ПОМНИТЬ что через каждый параметр нужно ставить пробел, в примере показано правильно как" << endl;
+	cout << "Важно помнить что все дополнительные параметры включаются на 'y', и выключатся на 'n'" << endl;
+	cout << "itm или же перевод в правильную дробь (рекомендуется включить)" << endl;
+	cout << "\tДопустим у нас дробь 7/3, и что бы такого результата в итоге не было включаем данный параметр символом y" << endl;
+	cout << "\tИ в итоге у нас получится из 7/3 в 2 1/3, что даёт нам правильный итоговый ответ";
+	cout << "reduce или же сокращение дроби (рекомендуется включить)" << endl;
+	cout << "\tДопустим у нас дробь 5/10, и для итогового ответа нам надо сократить дробь" << endl;
+	cout << "\tC включенным данным параметр у нас из 5/10 сокращается в 1/2" << endl;
+	cout << "debug или же режим отладки (рекомендуется отключить)" << endl;
+	cout << "\tОтладка для обычных пользователей не особо нужна, но нужна для разработчика например меня" << endl;
+	cout << "\tС её помощью можно находить баги в программе или же полное представление что делает программа для вычисления дроби" << endl;
+	cout << endl;
+	cout << "Пример записи для пользователя: " << endl;
+	cout << "calcfracwt" << endl;
+	cout << "5 1 4 / 0 4 5 y y n" << endl;
+	cout << "6 9/16" << endl;
+	cout << endl;
+}
+
 void consolemenu() {
 	writeBottom("Режим: главное меню");
 	string input;
@@ -832,6 +1478,8 @@ void consolemenu() {
 		helpwindowflag();
 	else if (input == "help calcperc")
 		helpcalcperc();
+	else if (input == "help calcfrac")
+		helpcalcfrac();
 	else if (input == "visual")
 		visualmenu();
 	else if (input == "clear")
@@ -843,8 +1491,11 @@ void consolemenu() {
 		calc();
 	else if (input == "calcperc")
 		calcperc();
+	else if (input == "calcfracwt") {
+		calcfraction2(false);
+	}
 	else if (input == "calcfrac") {
-		calcfraction2();
+		calcfraction2(true);
 	}
 	else if (input == "gcd")
 		findgcd();
@@ -862,6 +1513,8 @@ void consolemenu() {
 		findPrime();
 	else if (input == "fd")
 		findDivisors();
+	else if (input == "github")
+		github();
 	
 
 	consolemenu();
@@ -870,6 +1523,21 @@ int main(int argc, char** argv) {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	consolemenu();
-	
+	//int a = 41;
+	//int b = 35;
+	//int fakecounter = 0;
+	//int lnv = 0;
+	//while (a > 0) {
+	//	a -= b;
+	//	fakecounter++;
+	//}
+	//if (a + b > 0) {
+	//	lnv = (a + b);
+	//}
+	//int realcounter = fakecounter - 1;
+
+	//cout << realcounter << " " << lnv;
+	//
+
 	return 0;
 }
