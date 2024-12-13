@@ -1,19 +1,22 @@
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <Windows.h>
-#include <iostream>
-#include <string>
-#include <cmath>
-#include <vector>
-#include <numeric>
-#include <stdexcept>
-#include <sstream>
+#include <SDL.h> //Для визуального режима
+#include <SDL_ttf.h> //Для текста в визуальном режиме
+#include <Windows.h> //Для MessageBox в случае ошибок в визуальном режиме
+#include <iostream> //Для ввода вывода в консольном режиме
+#include <string> //Тип текста
+#include <cmath> //Библиотека для возведения в степень и других полезных функций
+#include <vector> //Для нахождения делителей числа
+#include <fstream> //Для создание настроек программы и их чтение
 using namespace std;
 
+//Структура дроби
 struct Fraction {
+	//Целая часть дроби
 	int fullpart = 0;
+	//Числитель дроби
 	int numerator = 0;
+	//Знаменатель дроби
 	int denominator = 0;
+	//Множитель для числителя
 	int ntmb = 0;
 
 	void toImproperFraction() {
@@ -25,8 +28,8 @@ struct Fraction {
 		fullpart = numerator / denominator;
 		numerator %= denominator;
 	}
-
 };
+//Проверка на простое число
 bool isPrime(int num) {
 	if (num <= 1) {
 		return false;
@@ -38,6 +41,7 @@ bool isPrime(int num) {
 	}
 	return true;
 }
+//Нахождение делителей числа
 vector<int> findDivisors(int num) {
 	vector<int> divisors;
 	for (int i = 1; i <= num; i++) {
@@ -47,12 +51,14 @@ vector<int> findDivisors(int num) {
 	}
 	return divisors;
 }
+//Переместится в консоли
 void gotoxy(int x, int y) {
 	COORD h;
 	h.X = x;
 	h.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), h);
 }
+//Получить высоту консоли
 int GetConsoleHeight() {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -63,6 +69,7 @@ int GetConsoleHeight() {
 		return 0;
 	}
 }
+//Получить координаты курсора по X
 int GetCursorX() {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -74,6 +81,7 @@ int GetCursorX() {
 		return 0;
 	}
 }
+//Получить координаты курсора по Y
 int GetCursorY() {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -85,6 +93,7 @@ int GetCursorY() {
 		return 0;
 	}
 }
+//Очистить нижную часть консоли
 void clearBottom() {
 	int x = GetCursorX();
 	int y = GetCursorY();
@@ -92,20 +101,20 @@ void clearBottom() {
 	cout << "                                                        ";
 	gotoxy(x, y);
 }
+//Написать что то в нижую часть консоли
 void writeBottom(string text) {
-	clearBottom();
-	int x = GetCursorX();
-	int y = GetCursorY();
-	gotoxy(0, GetConsoleHeight());
-	cout << text;
-	gotoxy(x, y);
+	//clearBottom();
+	//int x = GetCursorX();
+	//int y = GetCursorY();
+	//gotoxy(0, GetConsoleHeight());
+	//cout << text;
+	//gotoxy(x, y);
 }
-int centerX(int objectW, int windowW) {
-	return (windowW / 2) - (objectW / 2);
+//Получить центр координат
+int center(int objectWoH, int windowWoH) {
+	return (windowWoH / 2) - (objectWoH / 2);
 }
-int centerY(int objectH, int windowH) {
-	return (windowH / 2) - (objectH / 2);
-}
+//Нахождение НОДа (Для программы)
 int gcd(int a, int b) {
 	while (b != 0) {
 		int temp = b;
@@ -114,9 +123,11 @@ int gcd(int a, int b) {
 	}
 	return a;
 }
+//Нахождение НОКа (Для программы)
 int lcm(int a, int b) {
 	return (a * b) / gcd(a, b);
 }
+//Из десятичной дроби в обыкновенную (Для программы)
 string decimalToFraction(double decimal) {
 	int sign = (decimal < 0) ? -1 : 1; // Хранит знак числа
 	decimal = fabs(decimal); // Берём абсолютное значение
@@ -142,6 +153,7 @@ string decimalToFraction(double decimal) {
 	// Формируем строку для представления обыкновенной дроби
 	return to_string(numerator) + "/" + to_string(denominator);
 }
+//Из неправильной дроби в правильную (Для программы)
 string improperToMixed(int numerator, int denominator) {
 	// Проверяем, что знаменатель не равен нулю
 	if (denominator == 0) {
@@ -162,12 +174,16 @@ string improperToMixed(int numerator, int denominator) {
 		return std::to_string(wholePart) + " " + std::to_string(newNumerator) + "/" + std::to_string(denominator);
 	}
 }
+//Очистить консоль
 void cls() {
 	system("cls");
 }
+//Ждать ввод пользователя в консоли
 void pause() {
 	system("pause>nul");
 }
+//Структура кнопки в визуальном режиме
+
 struct Button {
 	SDL_Rect rect;
 	SDL_Color color;
@@ -197,6 +213,8 @@ struct Button {
 		rect.h = h;
 	}
 };
+
+//Инициализация визуального режима
 int LoadSDL() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		MessageBoxA(0, "Не удалось инициализировать SDL", "Ошибка", MB_ICONERROR);
@@ -209,31 +227,36 @@ int LoadSDL() {
 	return 0;
 }
 
+//Режим помощи
 void help() {
 	//cout << "Для консольного режима (для более опытных пользователей) -> console" << endl;
+	cout << "Настройки программы -> options" << endl;
 	cout << "Для визульного режима (для более новых пользователей) -> visual" << endl;
 	cout << "Для помощи выбора режима окна -> help window flag" << endl;
 	cout << "Для помощи выбора действий в калькуляторе процентов -> help calcperc" << endl;
 	cout << "Для помощи в калькуляторе дробей -> help calcfrac" << endl;
 	cout << "Для чистки всех сообщений -> clear" << endl;
 	cout << "Для выхода из программы -> exit" << endl;
+	cout << "Формулы -> formuls" << endl;
 	cout << "Ссылка на оригинальный репозиторий в github -> github" << endl;
 	cout << endl << endl;
 	cout << "Режимы программы: " << endl;
-	cout << "Калькулятор -> calc" << endl;
-	cout << "Калькулятор процентов -> calcperc" << endl;
-	cout << "Калькулятор дробей без подсказок -> calfracwt" << endl;
-	cout << "Калькулятор дробей -> calcfrac" << endl;
-	cout << "Найти наибольший общий делитель -> gcd" << endl;
-	cout << "Найти наименьший общее кратное -> lcm" << endl;
-	cout << "Найти квадратный корень -> sqrt" << endl;
-	cout << "Найти факториал -> fact" << endl;
-	cout << "Перевести десятичную дробь в обыкновенную -> dtf" << endl;
-	cout << "Из неправильной дроби в правильную -> itm" << endl;
-	cout << "Найти делители числа -> fd" << endl;
-	cout << "Проверить на простое число -> fp" << endl;
-
+	cout << "Калькулятор -> calc" << endl; //Calculator
+	cout << "Калькулятор процентов -> calcperc" << endl; //Calculator percent
+	cout << "Калькулятор дробей без подсказок -> calfracwt" << endl; //Calculator fraction without text
+	cout << "Калькулятор дробей -> calcfrac" << endl; //Calculator fraction
+	cout << "Найти наибольший общий делитель -> gcd" << endl; //greatest common divisor
+	cout << "Найти наименьший общее кратное -> lcm" << endl; //least common multiple
+	cout << "Найти квадратный корень -> в калькуляторе возвести ваше число в степень 0.5" << endl;
+	cout << "Найти кубический корень -> в калькуляторе возвести ваше число в степень 0.3333333 (чем больше троек тем точнее)" << endl;
+	cout << "Найти факториал -> fact" << endl; //Factorial
+	cout << "Перевести десятичную дробь в обыкновенную -> dtf" << endl; //Decimal to fraction
+	cout << "Из неправильной дроби в правильную -> itm" << endl; //Improper to mixed
+	cout << "Найти делители числа -> fd" << endl; //Find divisors
+	cout << "Проверить на простое число -> fp" << endl; //Find prime
+	cout << "Превратить дробь в десятичную дробь и проценты -> tdap" << endl; //To decimal and percent
 }
+//Отладка обычной дроби
 void debugfrac(Fraction frac1, Fraction frac2, Fraction result) {
 	cout << "frac1.fullpart:\t" << frac1.fullpart << endl;
 	cout << "frac1.numerator:\t" << frac1.numerator << endl;
@@ -251,6 +274,7 @@ void debugfrac(Fraction frac1, Fraction frac2, Fraction result) {
 	cout << "result.ntmb:\t\t" << result.ntmb << endl;
 	cout << endl;
 }
+//Отладка обычной дроби и не правильной дроби
 void debugmulfrac(Fraction frac1, Fraction frac2, Fraction wfrac1, Fraction wfrac2, Fraction result) {
 	cout << "frac1.fullpart:\t" << frac1.fullpart << endl;
 	cout << "frac1.numerator:\t" << frac1.numerator << endl;
@@ -278,6 +302,7 @@ void debugmulfrac(Fraction frac1, Fraction frac2, Fraction wfrac1, Fraction wfra
 	cout << "result.ntmb:\t\t" << result.ntmb << endl;
 	cout << endl;
 }
+//Нахождение квадратного корня (Нету в помощи)
 void findsqrt() {
 	writeBottom("Режим: нахождение квадратного корня");
 
@@ -285,6 +310,7 @@ void findsqrt() {
 	cin >> a;
 	cout << sqrt(a) << endl;
 }
+//Найти НОД (Для пользователя)
 void findgcd() {
 	writeBottom("Режим: нахождение НОДа");
 
@@ -300,6 +326,7 @@ void findgcd() {
 		cout << b << "/" << gcd(a, b) << "=" << b / gcd(a, b) << endl;
 	}
 }
+//Найти НОК (Для пользователя)
 void findlcm() {
 	writeBottom("Режим: нахождение НОКа");
 	int a, b;
@@ -308,9 +335,11 @@ void findlcm() {
 	cout << lcm(a, b) << "/" << a << "=" << lcm(a, b) / a<< endl;
 	cout << lcm(a, b) << "/" << b << "=" << lcm(a, b) / b<< endl;
 }
+//Режим калькулятора в визуальном режиме
 void calcSDL() {
 
 }
+//Проверка на простое число (Для пользователя)
 void findPrime() {
 	writeBottom("Режим: проверка на простое число");
 	int num;
@@ -322,6 +351,7 @@ void findPrime() {
 		cout << "Число не простое" << endl;
 	}
 }
+//Нахождение делителей числа (Для пользователя)
 void findDivisors() {
 	writeBottom("Режим: нахождение делителей");
 	int num;
@@ -333,6 +363,8 @@ void findDivisors() {
 	}
 	cout << endl;
 }
+
+//Создание визуального режима
 void startSDL() {
 	writeBottom("Режим: создание визуального режима");
 
@@ -408,7 +440,7 @@ void startSDL() {
 
 	SDL_Surface* text_main_surface = TTF_RenderUTF8_Solid(arial_50, u8"math главное визуальное меню", white_color);
 	SDL_Texture* text_main_texture = SDL_CreateTextureFromSurface(renderer, text_main_surface);
-	SDL_Rect text_main_rect = {centerX(text_main_surface->w, window_width), 10, text_main_surface->w, text_main_surface->h};
+	SDL_Rect text_main_rect = {center(text_main_surface->w, window_width), 10, text_main_surface->w, text_main_surface->h};
 	SDL_FreeSurface(text_main_surface);
 
 	bool running = true;
@@ -430,6 +462,8 @@ void startSDL() {
 			if (!button_leavefromvisualmode.isClicked(mouseX, mouseY)) {
 				button_leavefromvisualmode.changeColor(255, 255, 255);
 			}
+
+
 		}
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
@@ -448,6 +482,7 @@ void startSDL() {
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
+//Нахождение факториала
 int factorial(int n) {
 	int result = 1;
 	for (int i = 1; i <= n; i++) {
@@ -455,18 +490,21 @@ int factorial(int n) {
 	}
 	return result;
 }
+//Перевод десятичной дроби в обыкновенную (Для пользователя)
 void findfromdecimaltofraction() {
 	writeBottom("Режим: перевод десятичной дроби в обыкновенную");
 	double n;
 	cin >> n;
 	cout << decimalToFraction(n) << endl;
 }
+//Найти факториал (Для пользователя)
 void findfactorial() {
 	writeBottom("Режим: нахождения факториала");
 	int a;
 	cin >> a;
 	cout << factorial(a) << endl;
 }
+//Инициализация SDL
 void visualmenu() {
 	if (LoadSDL() == 0) {
 		cout << "Успешно инициализирован SDL2: " << LoadSDL() << endl;
@@ -475,15 +513,15 @@ void visualmenu() {
 	else {
 		cout << "Неуспешная инициализация SDL2: " << LoadSDL() << endl;
 	}
-	
 }
+//Помощь выбора флага для визуального режима
 void helpwindowflag() {
 	cout << "1 - FULLSCREEN (на весь экран)" << endl;
 	cout << "2 - SHOWN (оконный режим, при запуске видно)" << endl;
 	cout << "3 - HIDDEN (оконный режим, при запуске не видно)" << endl;
 	cout << "4 - BORDERLESS (оконный режим без верхней панели)" << endl;
-	
 }
+//Помощь калькулятора процентов
 void helpcalcperc() {
 	cout << "Первое число это исходное число или первое" << endl;
 	cout << "Второе число это процент или второе число" << endl;
@@ -498,6 +536,7 @@ void helpcalcperc() {
 	cout << "Пример записи: " << endl;
 	cout << "50+50" << endl << "75" << endl;
 }
+//Калькулятор процентов 
 void calcperc() {
 	writeBottom("Режим: калькулятор процентов");
 	double n, p;
@@ -518,6 +557,20 @@ void calcperc() {
 	else if (c == 'o')
 		cout << (n * 100 / p) << endl;
 }
+
+void tdap() {
+	double first;
+	double second;
+	double tohex;
+	double inpercentage;
+	cin >> first >> second;
+	tohex = first / second;
+	inpercentage = first / (second / 100);
+	cout << "Десятичная: " << tohex << endl;
+	cout << "Процент: " << inpercentage << "%" << endl;
+}
+
+//Калькулятор
 void calc() {
 	writeBottom("Режим: калькулятор");
 	double a, b;
@@ -533,9 +586,12 @@ void calc() {
 		cout << a / b << endl;
 	else if (c == '^')
 		cout << pow(a, b) << endl;
+	else if (c == '%')
+		cout << (int)a % (int)b << endl;
 	else
 		cout << "Ошибка: неправильный символ" << endl;
 }
+//Перевести из неправильной дроби в правильную (Для пользователя)
 void itm() {
 	writeBottom("Режим: из неправильной дроби в правильную");
 	int num;
@@ -543,6 +599,8 @@ void itm() {
 	cin >> num >> denom;
 	cout << improperToMixed(num, denom) << endl;
 }
+
+//Калькулятор дробей для двух чисел
 void calcfraction2(bool writetext) {
 	writeBottom("Режим: калькулятор дробей");
 	Fraction frac1, frac2, result;
@@ -1133,22 +1191,22 @@ void calcfraction2(bool writetext) {
 
 				int gcdfrac = gcd(result.denominator, result.numerator);
 				result.denominator /= gcdfrac;
-if (debug == 'y')
-debugfrac(frac1, frac2, result);
-result.numerator /= gcdfrac;
-if (debug == 'y')
-debugfrac(frac1, frac2, result);
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
+				result.numerator /= gcdfrac;
+				if (debug == 'y')
+					debugfrac(frac1, frac2, result);
 
-//и тут уже выводим
-if (result.fullpart == 0) {
-	cout << result.numerator << "/" << result.denominator << endl;
-}
-else if (result.numerator == 0) {
-	cout << result.fullpart << endl;
-}
-else {
-	cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
-}
+				//и тут уже выводим
+				if (result.fullpart == 0) {
+					cout << result.numerator << "/" << result.denominator << endl;
+				}
+				else if (result.numerator == 0) {
+				cout << result.fullpart << endl;
+				}
+				else {
+					cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+				}		
 			}
 		}
 	}
@@ -1434,10 +1492,67 @@ else {
 		}
 	}
 }
+int f()
+{
+	while (5 == 4)
+	{
 
+	}
+}
+
+//Формулы
+void formuls() {
+	cout << "S - Площадь, P - Периметр, Pi - Число Пи, R - Радиус, C - Длина окружности, a b c - Переменные, они могут быть разные в зависимости от вашей задачи" << endl;
+	cout << "N - Исходное число, Pr - Процент" << endl;
+	cout << "% - Действие которое означает остаток от деления целого числа" << endl;
+	cout << "Формула нахождения НОДа по алгоритму Евклида на C-Подобных языках: " << endl;
+	cout << "\tint НОД(int a, int b)" << endl;
+	cout << "\t{" << endl;
+	cout << "\twhile (b != 0)" << endl;
+	cout << "\t	{" << endl;
+	cout << "\t		int temp = b;" << endl;
+	cout << "\t		b = a % b;" << endl;
+	cout << "\t		a = temp;" << endl;
+	cout << "\t	}" << endl;
+	cout << "\t	return a;" << endl;
+	cout << "\t}" << endl;
+	cout << endl;
+	
+	cout << "Формула нахождения НОКа:" << endl;
+	cout << "\t(a * b) / НОД(a, b)" << endl;
+	cout << endl;
+
+
+	cout << "Калькулятор процентов: " << endl;
+	cout << "\tДобавить процент к числу: (N * (1 + Pr / 100))" << endl;
+	cout << "\tОтнять процент от числа: (N * (1 - Pr / 100))" << endl;
+	cout << "\tНайти процент от числа: (N * Pr / 100)" << endl;
+	cout << "\tНайти сколько процентов составляет число от числа: (N / Pr * 100)" << endl;
+	cout << "\tНайти сколько процентов одно число больше другого: (N / Pr * 100 - 100)" << endl;
+	cout << "\tНайти сколько процентов одно число меньше другого: (100 - (N / Pr) * 100)" << endl;
+	cout << "\tНайти 100 процентов: (N * 100 / Pr)" << endl << endl; 
+
+	cout << "Геометрия: " << endl;
+	cout << "\tНайти площадь фигуры: умножить длины всех сторон" << endl;
+	cout << "\t\tПример нахождения площади квадрата: S = a * a = a^2" << endl;
+	cout << "\t\tПример нахождения площади прямоугольника: S = a * b" << endl;
+	cout << "\t\tПример нахождения площади куба: S = a * a * a = a^3" << endl;
+	cout << "\t\tПример нахождения площади параллелепипеда: S = a * b * c" << endl;
+	cout << "\tНайти периметр фигуры: сложить сумму длин всех сторон" << endl;
+	cout << "\t\tПример нахождения периметра квадрата: P = 4 * a" << endl;
+	cout << "\t\tПример нахождения периметра прямоугольника: P = 2 * (a + b)" << endl;
+	cout << "\tНайти площадь круга: S = Pi * R^2" << endl;
+	cout << "\tНайти длину окружности: C = 2 * Pi * R" << endl;
+	cout << "\tПлощадь треугольника: S = 1/2 * a * h" << endl;
+
+
+}
+
+//Открывание оригинального репозитория в браузере
 void github() {
 	system("start https://github.com/rucomen5978/math");
 }
+//Помощь калькулятора дробей
 void helpcalcfrac() {
 	cout << "Для правильной работы с дробями надо ввести 10 параметров" << endl;
 	cout << "Сначало вводим целую часть первой дроби, если её нет пишем 0" << endl;
@@ -1450,7 +1565,7 @@ void helpcalcfrac() {
 	cout << "Важно помнить что все дополнительные параметры включаются на 'y', и выключатся на 'n'" << endl;
 	cout << "itm или же перевод в правильную дробь (рекомендуется включить)" << endl;
 	cout << "\tДопустим у нас дробь 7/3, и что бы такого результата в итоге не было включаем данный параметр символом y" << endl;
-	cout << "\tИ в итоге у нас получится из 7/3 в 2 1/3, что даёт нам правильный итоговый ответ";
+	cout << "\tИ в итоге у нас получится из 7/3 в 2 1/3, что даёт нам правильный итоговый ответ" << endl;
 	cout << "reduce или же сокращение дроби (рекомендуется включить)" << endl;
 	cout << "\tДопустим у нас дробь 5/10, и для итогового ответа нам надо сократить дробь" << endl;
 	cout << "\tC включенным данным параметр у нас из 5/10 сокращается в 1/2" << endl;
@@ -1464,11 +1579,11 @@ void helpcalcfrac() {
 	cout << "6 9/16" << endl;
 	cout << endl;
 }
-
+//Консольное меню
 void consolemenu() {
 	writeBottom("Режим: главное меню");
 	string input;
-	//cout << ":";
+	cout << ":";
 	getline(cin, input);
 	
 
@@ -1515,6 +1630,10 @@ void consolemenu() {
 		findDivisors();
 	else if (input == "github")
 		github();
+	else if (input == "formuls")
+		formuls();
+	else if (input == "tdap")
+		tdap();
 	
 
 	consolemenu();
@@ -1523,21 +1642,5 @@ int main(int argc, char** argv) {
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 	consolemenu();
-	//int a = 41;
-	//int b = 35;
-	//int fakecounter = 0;
-	//int lnv = 0;
-	//while (a > 0) {
-	//	a -= b;
-	//	fakecounter++;
-	//}
-	//if (a + b > 0) {
-	//	lnv = (a + b);
-	//}
-	//int realcounter = fakecounter - 1;
-
-	//cout << realcounter << " " << lnv;
-	//
-
 	return 0;
 }
