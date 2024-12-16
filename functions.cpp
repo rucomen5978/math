@@ -1,6 +1,5 @@
 #include "header.h"
 #include <cmath>
-#include <iostream>
 #include <vector>
 //Нахождение нода
 int gcd(int a, int b) {
