@@ -70,6 +70,11 @@ Fraction improperToMixed(int numerator, int denominator) {
 	return result;
 }
 
+Fraction toImporperFraction(Fraction frac1) {
+	frac1.toImproperFraction();
+	return frac1;
+}
+
 //Нахождение факториала
 int factorial(int n) {
 	int result = 1;
@@ -82,176 +87,140 @@ int factorial(int n) {
 //Добавить дробь
 Fraction addFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce) {
 	Fraction result;
-	
-	int cd = lcm(frac1.denominator, frac2.denominator);
 
-	//нахождение множителя для числителя обоих дробей
-	frac1.ntmb = cd / frac1.denominator;
-	frac2.ntmb = cd / frac2.denominator;
-
-	//умножение числителей, и изменение знаменателей дробей на общее
-	frac1.numerator *= frac1.ntmb;
-	frac1.denominator = cd;
-
-	frac2.numerator *= frac2.ntmb;
-	frac2.denominator = cd;
-
-	//выполнение действия
-	result.fullpart = frac1.fullpart + frac2.fullpart;
-	result.numerator = frac1.numerator + frac2.numerator;
-	result.denominator = cd;
-
-	//выполнение дополнительных действий
-	if (itm == true) {
-		int lnv = 0;
-		int counter = 0;
-
-		// Преобразуем неправильную дробь в смешанную
-		while (result.numerator >= result.denominator) {
-			result.numerator -= result.denominator;
-			counter++;
-		}
-
-		// Обновляем числитель и целую часть
-		result.fullpart += counter;
-		if (result.numerator < 0) {
-			result.numerator += result.denominator; // Делаем числитель положительным
-			result.fullpart--; // Уменьшаем целую часть, чтобы компенсировать
-			
-		}
-	}
-	else if (reduce == true) {
-		int fracgcd = gcd(result.denominator, result.numerator);
-		result.denominator = result.denominator / fracgcd;
-		result.numerator = result.numerator / fracgcd;
-	}
-	return result;
-}
-
-//Отнять дробь
-Fraction subFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce) {
-	Fraction result;
-
-	int cd = lcm(frac1.denominator, frac2.denominator);
-
-	//нахождение множителя для числителя обоих дробей
-	frac1.ntmb = cd / frac1.denominator;
-	frac2.ntmb = cd / frac2.denominator;
-
-	//умножение числителей, и изменение знаменателей дробей на общее
-	frac1.numerator *= frac1.ntmb;
-	frac1.denominator = cd;
-
-	frac2.numerator *= frac2.ntmb;
-	frac2.denominator = cd;
-
-	//выполнение действия
-	result.fullpart = frac1.fullpart - frac2.fullpart;
-	result.numerator = frac1.numerator - frac2.numerator;
-	result.denominator = cd;
-
-	//выполнение дополнительных действий
-	if (itm == true) {
-		int lnv = 0;
-		int counter = 0;
-
-		// Преобразуем неправильную дробь в смешанную
-		while (result.numerator >= result.denominator) {
-			result.numerator -= result.denominator;
-			counter++;
-		}
-
-		// Обновляем числитель и целую часть
-		result.fullpart += counter;
-		if (result.numerator < 0) {
-			result.numerator += result.denominator; // Делаем числитель положительным
-			result.fullpart--; // Уменьшаем целую часть, чтобы компенсировать
-
-		}
-	}
-	else if (reduce == true) {
-		int fracgcd = gcd(result.denominator, result.numerator);
-		result.denominator = result.denominator / fracgcd;
-		result.numerator = result.numerator / fracgcd;
-	}
-
-	return result;
-}
-
-//Умножить дробь
-Fraction mulFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce) {
-	Fraction result;
-
-	//Перевод в неправильую дробь
+	// Преобразуем обе дроби в неправильные
 	frac1.toImproperFraction();
 	frac2.toImproperFraction();
 
-	//Выполнение действия
-	result.numerator = frac1.numerator * frac2.numerator;
-	result.denominator = frac1.numerator * frac2.denominator;
+	// Находим общий знаменатель
+	int cd = lcm(frac1.denominator, frac2.denominator);
 
-	if (itm == true) {
-		int lnv = 0;
-		int counter = 0;
+	// Находим множитель для числителя обоих дробей
+	frac1.ntmb = cd / frac1.denominator;
+	frac2.ntmb = cd / frac2.denominator;
 
-		// Преобразуем неправильную дробь в смешанную
-		while (result.numerator >= result.denominator) {
-			result.numerator -= result.denominator;
-			counter++;
-		}
+	// Умножаем числители и изменяем знаменатели дробей на общий знаменатель
+	frac1.numerator *= frac1.ntmb;
+	frac2.numerator *= frac2.ntmb;
 
-		// Обновляем числитель и целую часть
-		result.fullpart += counter;
-		if (result.numerator < 0) {
-			result.numerator += result.denominator; // Делаем числитель положительным
-			result.fullpart--; // Уменьшаем целую часть, чтобы компенсировать
+	// Складываем числители
+	result.numerator = frac1.numerator + frac2.numerator;
+	result.denominator = cd;
 
-		}
+	// Выполнение дополнительных действий
+	// Сокращение дроби, если требуется
+	if (reduce) {
+		int fracgcd = gcd(result.numerator, result.denominator);
+		result.numerator /= fracgcd;
+		result.denominator /= fracgcd;
 	}
-	else if (reduce == true) {
-		int fracgcd = gcd(result.denominator, result.numerator);
-		result.denominator = result.denominator / fracgcd;
-		result.numerator = result.numerator / fracgcd;
+
+	// Преобразование в смешанную дробь, если требуется
+	if (itm) {
+		result.toMixedFraction();
 	}
 
 	return result;
+}
+
+
+Fraction subFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce) {
+	Fraction result;
+
+	// Преобразуем обе дроби в неправильные
+	frac1.toImproperFraction();
+	frac2.toImproperFraction();
+
+	// Находим общий знаменатель
+	int cd = lcm(frac1.denominator, frac2.denominator);
+
+	// Находим множитель для числителя обоих дробей
+	frac1.ntmb = cd / frac1.denominator;
+	frac2.ntmb = cd / frac2.denominator;
+
+	// Умножаем числители и приводим знаменатели к общему знаменателю
+	frac1.numerator *= frac1.ntmb;
+	frac2.numerator *= frac2.ntmb;
+
+	// Выполняем вычитание
+	result.numerator = frac1.numerator - frac2.numerator;
+	result.denominator = cd;
+
+	// Выполняем дополнительные действия
+	// Сокращение дроби, если требуется
+	if (reduce) {
+		int fracgcd = gcd(result.numerator, result.denominator);
+		result.numerator /= fracgcd;
+		result.denominator /= fracgcd;
+	}
+
+	// Преобразование в смешанную дробь, если требуется
+	if (itm) {
+		result.toMixedFraction();
+	}
+
+	return result;
+}
+
+
+Fraction mulFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce) {
+    Fraction result;
+
+    // Перевод в неправильную дробь
+    frac1.toImproperFraction();
+    frac2.toImproperFraction();
+
+    // Выполнение действия
+    result.numerator = frac1.numerator * frac2.numerator;
+    result.denominator = frac1.denominator * frac2.denominator; // Исправлено
+
+    // Сначала выполняем сокращение, если нужно
+    if (reduce) {
+        int fracgcd = gcd(result.numerator, result.denominator);
+        result.numerator /= fracgcd;
+        result.denominator /= fracgcd;
+    }
+
+    // Преобразование в смешанную дробь, если требуется
+    if (itm) {
+        result.toMixedFraction();
+    }
+
+    return result;
 }
 
 //Разделить дробь
 Fraction divFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce) {
-	Fraction result;
+    Fraction result;
 
-	//Перевод в неправильую дробь
-	frac1.toImproperFraction();
-	frac2.toImproperFraction();
+    // Переводим обе дроби в неправильные дроби
+    frac1.toImproperFraction();
+    frac2.toImproperFraction();
 
-	//Выполнение действия
-	result.numerator = frac1.numerator * frac2.denominator;
-	result.denominator = frac1.denominator * frac2.numerator;
+    // Выполнение действия деления
+    result.numerator = frac1.numerator * frac2.denominator;
+    result.denominator = frac1.denominator * frac2.numerator;
 
-	if (itm == true) {
-		int lnv = 0;
-		int counter = 0;
+    // Сначала выполняем сокращение, если нужно
+    if (reduce) {
+        int fracgcd = gcd(result.numerator, result.denominator);
+        result.numerator /= fracgcd;
+        result.denominator /= fracgcd;
+    }
 
-		// Преобразуем неправильную дробь в смешанную
-		while (result.numerator >= result.denominator) {
-			result.numerator -= result.denominator;
-			counter++;
-		}
+    // Преобразование в смешанную дробь, если требуется
+    if (itm) {
+        int counter = 0;
 
-		// Обновляем числитель и целую часть
-		result.fullpart += counter;
-		if (result.numerator < 0) {
-			result.numerator += result.denominator; // Делаем числитель положительным
-			result.fullpart--; // Уменьшаем целую часть, чтобы компенсировать
+        // Преобразуем неправильную дробь в смешанную
+        while (result.numerator >= result.denominator) {
+            result.numerator -= result.denominator;
+            counter++;
+        }
 
-		}
-	}
-	else if (reduce == true) {
-		int fracgcd = gcd(result.denominator, result.numerator);
-		result.denominator = result.denominator / fracgcd;
-		result.numerator = result.numerator / fracgcd;
-	}
+        // Обновляем числитель и целую часть
+        result.fullpart = counter;
+    }
 
-	return result;
+    return result;
 }
