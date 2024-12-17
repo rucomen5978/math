@@ -55,3 +55,5 @@ Fraction mulFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce);
 
 // Объявление функции для деления дробей
 Fraction divFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce);
+
+Fraction toImporperFraction(Fraction frac1);
