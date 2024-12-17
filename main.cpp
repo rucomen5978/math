@@ -4,8 +4,45 @@
 #include <cmath>
 #include <Windows.h>
 #include "header.h"
+#include <SDL.h>
+#include <SDL_ttf.h>
 using namespace std;
 bool showtext = false;
+
+struct Button {
+	SDL_Rect rect;
+	SDL_Color color;
+
+	void render(SDL_Renderer* renderer) {
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+		SDL_RenderFillRect(renderer, &rect);
+	}
+
+	bool isClicked(int x, int y) {
+		return (x >= rect.x && x <= (rect.x + rect.w) && y >= rect.y && y <= (rect.y + rect.w));
+	}
+
+	void changeColor(int r, int g, int b) {
+		color.r = r;
+		color.g = g;
+		color.b = b;
+	}
+
+	void moveTo(int x, int y) {
+		rect.x = x;
+		rect.y = y;
+	}
+};
+
+struct Fonts {
+	TTF_Font* arial_60 = TTF_OpenFont("arial.ttf", 60);
+	TTF_Font* arial_50 = TTF_OpenFont("arial.ttf", 50);
+	TTF_Font* arial_40 = TTF_OpenFont("arial.ttf", 40);
+	TTF_Font* arial_30 = TTF_OpenFont("arial.ttf", 30);
+
+	SDL_Color white = { 255,255,255,255 };
+	SDL_Color black = { 0, 0, 0, 255 };
+};
 
 //Инструкции по использованию чего то
 void helpcalc() {
@@ -74,6 +111,7 @@ void help() {
 	cout << "Как использовать калькулятор дробей -> helpcalcfrac" << endl;
 	cout << "Как использовать калькулятор процентов -> helpcalcperc" << endl;
 
+
 	cout << "Очистить всю консоль -> clear" << endl;
 	cout << "Выйти из программы -> exit" << endl;
 	cout << "Переход на репозиторий github -> github" << endl;
@@ -89,10 +127,12 @@ void help() {
 	cout << "Перевести десятичную дробь в обыкновенную -> dtf" << endl;
 	cout << "Из неправильно дроби в правильную -> itm" << endl;
 	cout << "Калькулятор дробей -> calcfrac" << endl;
-	cout << "Найти НОД -> В калькуляторе действие g" << endl;
-	cout << "Найти НОК -> В калькуляторе действие l" << endl;
+	cout << "Найти НОД -> gcd" << endl;
+	cout << "Найти НОК -> lcm" << endl;
+	cout << "В неправильную дробь -> tif" << endl;
 	cout << endl << endl;
 	cout << "Другое: " << endl;
+	cout << "Визуальный режим (бета) -> visual" << endl;
 	cout << "Включить подсказки в функциях -> showtext" << endl;
 	cout << "Выключить подсказки в функциях -> disabletext" << endl;
 	cout << "Посмотреть статус показа текста -> checktext" << endl;
@@ -284,8 +324,162 @@ void calcfrac(bool showtext) {
 		cout << "Неправильное действие, на будущее есть только +, -, *, /" << endl;
 }
 
+void github() {
+	system("start https://github.com/rucomen5978/math");
+}
+
+void visual() {
+	Fonts fonts;
+	cout << "Создание шрифтов для текста" << endl;
+	if (fonts.arial_60 == nullptr)cout << "Не удалось инициализировать шрифт arial.ttf, 60" << endl;
+	else cout << "Инициализирован шрифт arial.ttf, 60" << endl;
+	if (fonts.arial_50 == nullptr)cout << "Не удалось инициализировать шрифт arial.ttf, 50" << endl;
+	else cout << "Инициализирован шрифт arial.ttf, 50" << endl;
+	if (fonts.arial_40 == nullptr)cout << "Не удалось инициализировать шрифт arial.ttf, 40" << endl;
+	else cout << "Инициализирован шрифт arial.ttf, 40" << endl;
+	if (fonts.arial_30 == nullptr)cout << "Не удалось инициализировать шрифт arial.ttf, 30" << endl;
+	else cout << "Инициализирован шрифт arial.ttf, 30" << endl;
 
 
+
+	const int WINDOW_WIDTH = 1280;
+	const int WINDOW_HEIGHT = 720;
+	SDL_Window* window = nullptr;
+	SDL_Renderer* renderer = nullptr;
+	cout << "Создание окна и рендерера" << endl;
+	window = SDL_CreateWindow("math", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	if (window == nullptr) cout << "Ошибка инициализации окна" << endl;
+	else cout << "Инициализировано окно" << endl;
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+	if (renderer == nullptr) cout << "Ошибка инициализации рендерера" << endl;
+	else cout << "Инициализирован рендерер" << endl;
+
+
+	
+
+	//Создание кнопки
+	Button exit_button = { {WINDOW_WIDTH-320, WINDOW_HEIGHT-100, 300, 80},{255,255,255,255} };
+	cout << "Создана кнопка выхода" << endl;
+
+	//Создание текста для кнопки выхода
+	SDL_Surface* exit_text_main_surface = TTF_RenderUTF8_Solid(fonts.arial_60, u8"Выйти", fonts.black);
+	SDL_Texture* exit_text_main_texture = SDL_CreateTextureFromSurface(renderer, exit_text_main_surface);
+	SDL_Rect exit_text_main_rect = {WINDOW_WIDTH-320, WINDOW_HEIGHT-100, exit_text_main_surface->w, exit_text_main_surface->h};
+	if (exit_text_main_surface == nullptr) cout << "Не удалось сделать поверхность текста для кнопки выхода" << endl;
+	else cout << "Создана поверхность текста для кнопки выхода" << endl;
+	if (exit_text_main_texture == nullptr) cout << "Не удалось сделать текстуру текста для кнопки выхода" << endl;
+	else cout << "Создана текстура текста для кнопки выхода" << endl;
+
+
+	SDL_FreeSurface(exit_text_main_surface);
+
+	bool running = true;
+	SDL_Event event;
+	int mouseX, mouseY;
+	while (running) {
+		SDL_GetMouseState(&mouseX, &mouseY);
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) {
+				running = false;
+			}
+
+			if (exit_button.isClicked(mouseX, mouseY)) {
+				exit_button.changeColor(200, 200, 200);
+				if (event.type == SDL_MOUSEBUTTONDOWN) {
+					running = false;
+				}
+			}
+
+			if (!exit_button.isClicked(mouseX, mouseY)) {
+				exit_button.changeColor(255, 255, 255);
+			}
+		}
+		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+		SDL_RenderClear(renderer);
+		exit_button.render(renderer);
+		SDL_RenderCopy(renderer, exit_text_main_texture, nullptr, &exit_text_main_rect);
+		SDL_RenderPresent(renderer);
+	}
+	SDL_DestroyTexture(exit_text_main_texture);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	TTF_Quit();
+}
+
+int initSDL() {
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+		MessageBoxA(0, "Не удалось инициализировать SDL_EVERYTHING", "Ошибка", MB_ICONERROR);
+		return 1;
+	}
+	else if (TTF_Init() < 0) {
+		MessageBoxA(0, "Не удалось инициализировать SDL_TTF", "Ошибка", MB_ICONERROR);
+		return 2;
+	}
+
+	return 0;
+}
+
+void loadSDL() {
+	//Загрузка SDL
+	int rois = initSDL();
+	if (rois == 0){
+		cout << "Успешно инициализирован SDL: " << rois << endl;
+		visual();
+	}
+	else if (rois == 1)
+		cout << "Не инициализирован SDL: " << rois << ", " << SDL_GetError() << endl;
+	else if (rois == 2)
+		cout << "Не инициализирован SDL_TTF: " << rois << "," << TTF_GetError << endl;
+	else
+		cout << "Неизвестный код результата инициализации" << endl;
+}
+
+void tif(bool showtext) {
+	Fraction frac1;
+	if (showtext) cout << "Введите целую часть: ";
+	cin >> frac1.fullpart;
+	if (frac1.fullpart == 0) cout << "Если целая часть равна нулю, то зачем вам превращать в неправильную дробь?" << endl;
+	else {
+
+		if (showtext) cout << "Введите числитель: ";
+		cin >> frac1.numerator;
+		if (showtext) cout << "Введите знаменатель: ";
+		cin >> frac1.denominator;
+
+		frac1.toImproperFraction();
+		if (showtext) cout << "Ответ: " << frac1.numerator << "/" << frac1.denominator << endl;
+		else cout << frac1.numerator << "/" << frac1.denominator << endl;
+	}
+}
+
+void findgcd(bool showtext) {
+	int a, b;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> a;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> b;
+	if (gcd(a, b) == 1 && showtext) cout << "Взаимно простые числа, либо же НОД = 1" << endl;
+	else {
+		if (showtext) cout << "Ответ: " << gcd(a, b) << endl;
+		else cout << gcd(a, b) << endl;
+		cout << a << "/" << gcd(a, b) << "=" << a / gcd(a, b) << endl;
+		cout << b << "/" << gcd(a, b) << "=" << b / gcd(a, b) << endl;
+	}
+}
+
+void findlcm(bool showtext) {
+	int a, b;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> a;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> b;
+	
+	if (showtext) cout << "Ответ: " << lcm(a, b) << endl;
+	else cout << lcm(a, b) << endl;
+	cout << lcm(a, b) << "/" << a << "=" << lcm(a, b) / a << endl;
+	cout << lcm(a, b) << "/" << b << "=" << lcm(a, b) / b << endl;
+}
 
 void consolemenu() {
 	string action;
@@ -298,6 +492,10 @@ void consolemenu() {
 		helpcalcfrac();
 	else if (action == "helpcalcperc")
 		helpcalcperc();
+	else if (action == "github")
+		github();
+	else if (action == "visual")
+		loadSDL();
 
 	else if (action == "help")
 		help();
@@ -319,6 +517,12 @@ void consolemenu() {
 		calcfrac(showtext);
 	else if (action == "clear")
 		system("cls");
+	else if (action == "tif")
+		tif(showtext);
+	else if (action == "gcd")
+		findgcd(showtext);
+	else if (action == "lcm")
+		findlcm(showtext);
 	else if (action == "exit")
 		exit(0);
 
@@ -339,6 +543,5 @@ void consolemenu() {
 int main(int argc, char** argv) {
 	SetConsoleOutputCP(1251);
 	consolemenu();
-
 	return 0;
 }
