@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-
+#include <iostream>
 int center(int window, int object);
 bool isPrime(int num);
 
@@ -38,6 +38,19 @@ struct Fraction {
         numerator %= denominator;
     }
 
+    void print() const {
+        if (fullpart != 0) {
+            std::cout << fullpart << " ";
+        }
+        if (numerator != 0) {
+            std::cout << numerator << "/" << denominator;
+        }
+        if (fullpart == 0 && numerator == 0) {
+            std::cout << 0;
+        }
+        std::cout << std::endl;
+    }
+
 };
 
 Fraction decimalToFraction(double decimal);
@@ -57,3 +70,11 @@ Fraction mulFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce);
 Fraction divFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce);
 
 Fraction toImporperFraction(Fraction frac1);
+
+Fraction prop3(Fraction frac1, Fraction frac2, Fraction frac3);
+
+Fraction floatToFraction(double num1, double num2, bool itm, bool reduce);
+
+
+//Консольный режим
+void consolemenu();
