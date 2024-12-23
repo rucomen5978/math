@@ -224,3 +224,55 @@ Fraction divFraction(Fraction frac1, Fraction frac2, bool itm, bool reduce) {
 
     return result;
 }
+
+Fraction floatToFraction(double num1, double num2, bool itm, bool reduce) {
+	// Преобразуем дроби в целые числа, умножив их на степень 10, чтобы избавиться от плавающей точки
+	int scale = 1000000; // Степень 10 для преобразования до целых чисел (например, до 6 знаков после запятой)
+	int numerator = static_cast<int>(num1 * scale);
+	int denominator = static_cast<int>(num2 * scale);
+
+	// Нахождение НОД для упрощения дроби
+	int gcd_val = gcd(numerator, denominator);
+
+	// Упрощение дроби
+	if (reduce){
+		numerator /= gcd_val;
+		denominator /= gcd_val;
+	}
+	
+
+	// Теперь можно преобразовать эту дробь в смешанную
+	Fraction frac;
+	frac.numerator = numerator;
+	frac.denominator = denominator;
+
+	// Преобразуем её в смешанную дробь
+	if (itm) {
+		frac.toMixedFraction();
+	}
+	return frac;
+}
+
+//Нахождение пропорции из трёх дробей
+Fraction prop3(Fraction frac1, Fraction frac2, Fraction frac3){
+	//ВАЖНО ПОНИМАТЬ ЧТО ПРОГРАММА РАБОТАЕТ ТАКИМ ОБРАЗОМ
+	//   frac1      frac2
+	//   ------	    -----
+	//	 result	    frac3
+
+	//Превращаем все дроби в неправильные
+	frac1.toImproperFraction();
+	frac2.toImproperFraction();
+	frac3.toImproperFraction();
+
+	//Умножаем первую дробь с третьей
+	frac1.denominator *= frac3.denominator;
+	frac1.numerator *= frac3.numerator;
+
+	//Делим результат записанный в первую дробь на вторую дробь
+	frac1 = divFraction(frac1, frac2, false, false);
+	
+	//Переводим в правильную дробь
+	frac1.toMixedFraction();
+	return frac1;
+}
