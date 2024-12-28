@@ -1,6 +1,9 @@
+//Файл который выдаёт результаты всех функций
+
 #include "header.h"
 #include <cmath>
 #include <vector>
+#include <string>
 //Нахождение нода
 int gcd(int a, int b) {
 	while (b != 0) {
@@ -42,22 +45,26 @@ std::vector<int> Divisors(int num) {
 }
 
 //Из десятичной дроби в обыкновенную
-Fraction decimalToFraction(double decimal) {
-	int sign = (decimal < 0) ? -1 : 1;
-	decimal = fabs(decimal);
-	int decimalPlaces = 0;
-	while (fmod(decimal, 1) != 0) {
-		decimal *= 10;
-		decimalPlaces++;
-	}
-	int denominator = static_cast<int>(pow(10, decimalPlaces));
-	int numerator = static_cast<int>(decimal * sign);
-	int commonDivisor = gcd(abs(numerator), denominator);
-	numerator /= commonDivisor;
-	denominator /= commonDivisor;
+Fraction decimalToFraction(double decimal, bool itm, bool reduce) {
 	Fraction result;
-	result.denominator = denominator;
-	result.numerator = numerator;
+	
+	result.numerator = static_cast<int>(decimal * 10);
+	result.denominator = 10;
+	while (std::floor(result.numerator) != result.numerator) {
+		result.numerator *= 10;
+		result.denominator *= 10;
+	}
+
+	if (reduce) {
+		int gcdval = gcd(result.denominator, result.numerator);
+		result.numerator /= gcdval;
+		result.denominator /= gcdval;
+	}
+	
+	if (itm) {
+		result.toMixedFraction();
+	}
+
 	return result;
 }
 
@@ -275,4 +282,26 @@ Fraction prop3(Fraction frac1, Fraction frac2, Fraction frac3){
 	//Переводим в правильную дробь
 	frac1.toMixedFraction();
 	return frac1;
+}
+
+int sumOfDigits(double number) {
+	std::string numberStr = std::to_string(number); // Преобразуем число в строку
+	int sum = 0;
+
+	for (char digit : numberStr) {
+		if (isdigit(digit)) { // Проверяем, является ли символ цифрой
+			sum += digit - '0'; // Преобразуем символ в цифру и добавляем к сумме
+		}
+	}
+
+	// Суммируем цифры, пока не останется одна цифра
+	while (sum >= 10) {
+		int tempSum = 0;
+		while (sum > 0) {
+			tempSum += sum % 10; // Добавляем последнюю цифру к временной сумме
+			sum /= 10; // Убираем последнюю цифру
+		}
+		sum = tempSum; // Обновляем сумму
+	}
+	return sum; // Возвращаем единственную цифру
 }
