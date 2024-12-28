@@ -1,3 +1,5 @@
+//Файл для взаимодействия с программой
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -183,18 +185,23 @@ void calcperc(bool showtext) {
 }
 
 //Превратить число в десятичное и проценты
-void tdap(bool showtext) {
-	double first, second;
-	if (showtext) cout << "Введите числитель: ";
-	cin >> first;
-	if (showtext) cout << "Введите знаменатель: ";
-	cin >> second;
+void tdap(bool showtext) { //to decimal and procent
+	Fraction result;
 
-	if (showtext) {
-		cout << "Десятичная: " << first / second << endl;
-		cout << "Проценты: " << first / (second / 100) << endl;
-	}
-	else cout << first / second << endl << first / (second / 100) << endl;
+	if (showtext) cout << "Введите целую часть: ";
+	cin >> result.fullpart;
+	if (showtext) cout << "Введите числитель: ";
+	cin >> result.numerator;
+	if (showtext) cout << "Введите знаменатель: ";
+	cin >> result.denominator;
+
+	if (result.fullpart != 0)
+		result.toImproperFraction();
+
+	double decimal = (double)result.numerator / (double)result.denominator;
+	double percent = (double)result.numerator / ((double)result.denominator / 100);
+	if (showtext) cout << "Десятичная: " << decimal << endl << "Процент: " << percent << "%" << endl;
+	else cout << decimal << endl << percent << "%" << endl;
 }
 
 //Проверить на простое число
@@ -223,11 +230,16 @@ void findDivisors(bool showtext) {
 //Из десятичной дроби в обыкновенную
 void dtf(bool showtext) {
 	double decimal;
+	bool itm, reduce;
 	Fraction result;
 	if (showtext) cout << "Введите десятичную дробь: ";
 	cin >> decimal;
-	result = decimalToFraction(decimal);
-	cout << result.numerator << "/" << result.denominator << endl;
+	if (showtext) cout << "Сокращать число (1 - Да, 0 - Нет): ";
+	cin >> reduce;
+	if (showtext) cout << "Переводить в смешанную дробь (1 - Да, 0 - Нет): ";
+	cin >> itm;
+	result = decimalToFraction(decimal, itm, reduce);
+	result.print();
 }
 
 //Из неправильной дроби в правильную
@@ -238,7 +250,7 @@ void itm(bool showtext) {
 	if (showtext) cout << "Введите знаменатель: ";
 	cin >> user.denominator;
 	result = improperToMixed(user.numerator, user.denominator);
-	cout << result.fullpart << " " << result.numerator << "/" << result.denominator << endl;
+	result.print();
 }
 
 //Калькулятор дробей
@@ -267,31 +279,29 @@ void calcfrac(bool showtext) {
 	cin >> reduce;
 	if (action == '+') {
 		c = addFraction(a, b, itm, reduce);
-		if (showtext) cout << "Ответ: " << c.fullpart << " " << c.numerator << "/" << c.denominator << endl;
-		else cout << c.fullpart << " " << c.numerator << "/" << c.denominator << endl;
+		if (showtext) { cout << "Ответ: "; c.print(); }
+		else c.print();
 	}
 	else if (action == '-') {
 		c = subFraction(a, b, itm, reduce);
-		if (showtext) cout << "Ответ: " << c.fullpart << " " << c.numerator << "/" << c.denominator << endl;
-		else cout << c.fullpart << " " << c.numerator << "/" << c.denominator << endl;
+		if (showtext) { cout << "Ответ: "; c.print(); }
+		else c.print();
 	}
 	else if (action == '*') {
 		c = mulFraction(a, b, itm, reduce);
-		if (showtext) cout << "Ответ: " << c.fullpart << " " << c.numerator << "/" << c.denominator << endl;
-		else cout << c.fullpart << " " << c.numerator << "/" << c.denominator << endl;
+		if (showtext) { cout << "Ответ: "; c.print(); }
+		else c.print();
 	}
 	else if (action == '/') {
 		c = divFraction(a, b, itm, reduce);
-		if (showtext) cout << "Ответ: " << c.fullpart << " " << c.numerator << "/" << c.denominator << endl;
-		else cout << c.fullpart << " " << c.numerator << "/" << c.denominator << endl;
+		if (showtext) { cout << "Ответ: "; c.print(); }
+		else c.print();
 	}
 	else
 		cout << "Неправильное действие, на будущее есть только +, -, *, /" << endl;
 }
 
-void github() {
-	system("start https://github.com/rucomen5978/math");
-}
+void github() { system("start https://github.com/rucomen5978/math"); }
 
 
 void tif(bool showtext) {
@@ -378,6 +388,93 @@ void helpprop3() {
 	cout << endl << "Результат находится с помощью умножения первой и третьей дроби и делением на вторую дробь." << endl;
 }
 
+void ian(bool showtext) { //info about number
+	double number;
+	if (showtext) cout << "Введите число: ";
+	cin >> number;
+
+	if (showtext) cout << "Квадрат числа: \t\t\t";
+	cout << number * number << endl;
+
+	if (showtext) cout << "Куб числа: \t\t\t";
+	cout << number * number * number << endl;
+
+	if (showtext) cout << "Квадратный корень числа: \t";
+	cout << pow(number, 0.5) << endl;
+
+	if (showtext) cout << "Кубический корень числа: \t";
+	cout << pow(number, 0.33333333333333333333333333) << endl;
+
+	if (showtext) cout << "Степень на себя: \t\t";
+	cout << pow(number, number) << endl;
+
+	if (showtext) cout << "Сложение чисел: \t\t";
+	cout << sumOfDigits(number) << endl;
+
+	if (showtext) cout << "Делители числа: \t\t";
+	vector<int> divisors = Divisors(number);
+	for (int div : divisors) {
+		cout << div << " ";
+	}
+	cout << endl;
+
+	if (showtext) cout << "Корень самого себя: \t\t";
+	cout << pow(number, 1.0 / number) << endl;
+	
+	if (showtext) cout << "1 Делённый на число: \t\t";
+	cout << 1 / number << endl;
+
+	if (showtext) cout << "1 / (a / 100): \t\t\t";
+	cout << 1 / (number / 100) << endl;
+}
+
+void ian2(bool showtext) {
+	double number1, number2;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> number1;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> number2;
+
+	if (showtext) cout << "Сложение чисел: ";
+	cout << number1 + number2 << endl;
+	if (showtext) cout << "Вычитание чисел: ";
+	cout << number1 - number2 << endl;
+	if (showtext) cout << "Умножение чисел: ";
+	cout << number1 * number2 << endl;
+	if (showtext) cout << "Деление чисел: ";
+	cout << number1 / number2 << endl;
+	if (showtext) cout << "Остаток от деления: ";
+	cout << (int)number1 % (int)number2 << endl;
+
+	if (showtext) cout << "НОД: ";
+	cout << gcd(number1, number2) << endl;
+	
+	if (showtext) cout << "НОК: ";
+	cout << lcm(number1, number2) << endl;
+
+	if (gcd(number1, number2) != 1) {
+		if (showtext) cout << number1 << " / " << gcd(number1, number2) << ": ";
+		cout << number1 / gcd(number1, number2) << endl;
+		if (showtext) cout << number2 << " / " << gcd(number1, number2) << ": ";
+		cout << number2 / gcd(number1, number2) << endl;
+	}
+	
+	if (showtext) cout << lcm(number1, number2) << " / " << number1 << ": ";
+	cout << lcm(number1, number2) / number1 << endl;
+	if (showtext) cout << lcm(number1, number2) << " / " << number2 << ": ";
+	cout << lcm(number1, number2) / number2 << endl;
+	
+	if (showtext) cout << number2 << " Корень " << number1 << ": ";
+	cout << pow(number1, 1.0 / number2) << endl;
+
+	if (showtext) cout << number1 << "^" << number2 << ": ";
+	cout << pow(number1, number2) << endl;
+
+	if (showtext) cout << "Умноженное сложение чисел: ";
+	cout << sumOfDigits(number1 * number2) << endl;
+
+}
+
 void ftf(bool showtext) {
 	double a, b;
 	bool itm, reduce;
@@ -406,6 +503,8 @@ void consolemenu() {
 		helpcalcfrac();
 	else if (action == "helpcalcperc")
 		helpcalcperc();
+	else if (action == "helpprop3")
+		helpprop3();
 
 	else if (action == "github")
 		github();
@@ -440,6 +539,10 @@ void consolemenu() {
 		findprop3(showtext);
 	else if (action == "ftf")
 		ftf(showtext);
+	else if (action == "ian")
+		ian(showtext);
+	else if (action == "ian2")
+		ian2(showtext);
 	else if (action == "exit")
 		exit(0);
 
