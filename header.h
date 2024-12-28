@@ -53,7 +53,7 @@ struct Fraction {
 
 };
 
-Fraction decimalToFraction(double decimal);
+Fraction decimalToFraction(double decimal, bool itm, bool reduce);
 
 Fraction improperToMixed(int numerator, int denominator);
 
@@ -75,6 +75,7 @@ Fraction prop3(Fraction frac1, Fraction frac2, Fraction frac3);
 
 Fraction floatToFraction(double num1, double num2, bool itm, bool reduce);
 
+int sumOfDigits(double number);
 
 //Консольный режим
 void consolemenu();
