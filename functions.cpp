@@ -17,7 +17,7 @@ int gcd(int a, int b) {
 //Нахождение нока
 int lcm(int a, int b) { return (a * b) / gcd(a, b); }
 
-//Нахождение цетра
+//Нахождение центра
 int center(int window, int object) { return (window / 2) - (object / 2); }
 
 //Проверка на простое число
@@ -45,25 +45,18 @@ std::vector<int> Divisors(int num) {
 }
 
 //Из десятичной дроби в обыкновенную
-Fraction decimalToFraction(double decimal, bool itm, bool reduce) {
+Fraction decimalToFraction(double decimal) {
 	Fraction result;
-	
-	result.numerator = static_cast<int>(decimal * 10);
-	result.denominator = 10;
-	while (std::floor(result.numerator) != result.numerator) {
-		result.numerator *= 10;
-		result.denominator *= 10;
-	}
+	const int precision = 1000000; // Устанавливаем точность (например, 1e6)
+	int numerator = static_cast<int>(decimal * precision);
+	int denominator = precision;
 
-	if (reduce) {
-		int gcdval = gcd(result.denominator, result.numerator);
-		result.numerator /= gcdval;
-		result.denominator /= gcdval;
-	}
-	
-	if (itm) {
-		result.toMixedFraction();
-	}
+	// Сокращаем дробь
+	int gcdval = gcd(numerator, denominator);
+	numerator /= gcdval;
+	denominator /= gcdval;
+
+	return { 0, numerator, denominator };
 
 	return result;
 }
@@ -284,6 +277,8 @@ Fraction prop3(Fraction frac1, Fraction frac2, Fraction frac3){
 	return frac1;
 }
 
+double rt(double number, double root) { return pow(number, 1.0/root); }
+
 int sumOfDigits(double number) {
 	std::string numberStr = std::to_string(number); // Преобразуем число в строку
 	int sum = 0;
@@ -305,3 +300,4 @@ int sumOfDigits(double number) {
 	}
 	return sum; // Возвращаем единственную цифру
 }
+
