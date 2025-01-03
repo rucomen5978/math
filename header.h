@@ -38,6 +38,11 @@ struct Fraction {
         numerator %= denominator;
     }
 
+    void reduce() {
+        numerator /= gcd(numerator, denominator);
+        denominator /= gcd(numerator, denominator);
+    }
+
     void print() const {
         if (fullpart != 0) {
             std::cout << fullpart << " ";
@@ -53,7 +58,7 @@ struct Fraction {
 
 };
 
-Fraction decimalToFraction(double decimal, bool itm, bool reduce);
+Fraction decimalToFraction(double decimal);
 
 Fraction improperToMixed(int numerator, int denominator);
 
@@ -76,6 +81,8 @@ Fraction prop3(Fraction frac1, Fraction frac2, Fraction frac3);
 Fraction floatToFraction(double num1, double num2, bool itm, bool reduce);
 
 int sumOfDigits(double number);
+
+double rt(double number, double root);
 
 //Консольный режим
 void consolemenu();
