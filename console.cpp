@@ -9,13 +9,6 @@
 
 #define inst <<"Инструкция по использованию"<<
 
-//Один миллилитр
-#define onemillilitertocbsm 1
-#define onemillilitertolitr 0.001
-
-bool pukikaki = true;
-
-
 using namespace std;
 bool showtext = false;
 bool whilefunc = false;
@@ -271,7 +264,7 @@ void helpwhilefunc() {
 	cout << "Если вы хотите использовать функцию несколько раз, при этом не вводя одну и ту же комманду вызова функции кучу раз, то эта комманда для вас." << endl;
 	cout << "Что бы включить эту функцию надо ввести комманду enablewhilefunc" << endl;
 	cout << "Что бы выключить эту функцию надо ввести комманду disablewhilefunc" << endl;
-	cout << "Если вы зайдёте в какую либо функцию с этим включенным режимом, то выйти можно введя нули куда только можно кроме действий." << endl;
+	cout << "Если вы зайдёте в какую либо функцию с этим включенным режимом, то выйти можно введя нули куда только можно кроме действий. (Исключение калькулятор дробей, там надо ввести везде нули кроме действия и знаменателя)" << endl;
 	cout << "Вот допустим мы зашли в калькулятор с включенным whilefunc. Мы сделали все свои дела, а что бы выйти мы пишем например 0+0, 0/0, 0*0, 0-0. В любом из этих действий калькулятор выйдет из постоянного цикла." << endl;
 	cout << "Что бы проверить включен ли этот режим, введите комманду checkwhilefunc" << endl;
 }
@@ -441,12 +434,37 @@ void findrt(bool showtext, bool whilefunc) {
 	if (showtext) cout << "Квадратный корень: ";
 	cout << sqrt(number) << endl;
 	if (showtext) cout << "Кубический корень: ";
-	cout << rt(number, 3) << endl;
+	cout << cbrt(number) << endl;
 	if (showtext) cout << "Заданный вами корень: ";
 	cout << rt(number, root) << endl;
 
 	if (number == 0 && root == 0 && whilefunc) { whilefunc = false; }
 	if (whilefunc) { findrt(showtext, whilefunc); }
+}
+
+//Нахождение квадратного корня, find square root
+void findsqrt(bool showtext, bool whilefunc) {
+	double number;
+
+	if (showtext) cout << "Введите число: ";
+	cin >> number;
+	if (showtext) cout << "Ответ: ";
+	cout << sqrt(number) << endl;
+
+	if (number == 0 && whilefunc) { whilefunc = false; }
+	if (whilefunc) { findsqrt(showtext, whilefunc); }
+}
+
+//Нахождение кубического корня, find cube root
+void findcbrt(bool showtext, bool whilefunc) {
+	double number;
+	if (showtext) cout << "Введите число: ";
+	cin >> number;
+	if (showtext) cout << "Ответ: ";
+	cout << cbrt(number) << endl;
+
+	if (number == 0 && whilefunc) { whilefunc = false; }
+	if (whilefunc) { findcbrt(showtext, whilefunc); }
 }
 
 //Превратить число в десятичное и проценты, to decimal and percent
@@ -469,7 +487,7 @@ void tdap(bool showtext, bool whilefunc) {
 	if (showtext) cout << "Процент: ";
 	cout << percent << "%" << endl;
 
-	if (fullpart == 0 && numerator == 0 && denominator && whilefunc) { whilefunc = false; }
+	if (fullpart == 0 && numerator == 0 && denominator == 0 && whilefunc) { whilefunc = false; }
 	if (whilefunc) { tdap(showtext, whilefunc); }
 }
 
@@ -522,10 +540,12 @@ void itm(bool showtext, bool whilefunc) {
 	cin >> user.numerator;
 	if (showtext) cout << "Введите знаменатель: ";
 	cin >> user.denominator;
-	result = improperToMixed(user.numerator, user.denominator);
-	result.print();
-
 	if (user.numerator == 0 && user.denominator == 0 && whilefunc) { whilefunc = false; }
+	else {
+		result = improperToMixed(user.numerator, user.denominator);
+		result.print();
+	}
+	
 	if (whilefunc) { itm(showtext, whilefunc); }
 }
 
@@ -553,30 +573,31 @@ void calcfrac(bool showtext, bool whilefunc) {
 	cin >> itm;
 	if (showtext) cout << "Сокращать результат? 1 - Да, 0 - Нет: ";
 	cin >> reduce;
-	if (action == '+') {
-		c = addFraction(a, b, itm, reduce);
-		if (showtext) cout << "Ответ: ";
-		c.print();
-	}
-	else if (action == '-') {
-		c = subFraction(a, b, itm, reduce);
-		if (showtext) cout << "Ответ: ";
-		c.print();
-	}
-	else if (action == '*') {
-		c = mulFraction(a, b, itm, reduce);
-		if (showtext) cout << "Ответ: ";
-		c.print();
-	}
-	else if (action == '/') {
-		c = divFraction(a, b, itm, reduce);
-		if (showtext) cout << "Ответ: ";
-		c.print();
-	}
-	else
-		cout << "Неправильное действие, на будущее есть только +, -, *, /" << endl;
-
 	if (a.fullpart == 0 && a.numerator == 0 && a.denominator == 0 && b.fullpart == 0 && b.numerator == 0 && b.denominator == 0 && whilefunc) { whilefunc = false; }
+	else {
+		if (action == '+') {
+			c = addFraction(a, b, itm, reduce);
+			if (showtext) cout << "Ответ: ";
+			c.print();
+		}
+		else if (action == '-') {
+			c = subFraction(a, b, itm, reduce);
+			if (showtext) cout << "Ответ: ";
+			c.print();
+		}
+		else if (action == '*') {
+			c = mulFraction(a, b, itm, reduce);
+			if (showtext) cout << "Ответ: ";
+			c.print();
+		}
+		else if (action == '/') {
+			c = divFraction(a, b, itm, reduce);
+			if (showtext) cout << "Ответ: ";
+			c.print();
+		}
+		else
+			cout << "Неправильное действие, на будущее есть только +, -, *, /" << endl;
+	}
 	if (whilefunc) { calcfrac(showtext, whilefunc); }
 }
 
@@ -600,7 +621,7 @@ void tif(bool showtext, bool whilefunc) { //И
 		else cout << frac1.numerator << "/" << frac1.denominator << endl;
 	}
 
-	if (frac1.fullpart == 0 && frac1.numerator == 0 && frac1.denominator && whilefunc || frac1.fullpart == 0 && whilefunc) { whilefunc = false; }
+	if (frac1.fullpart == 0 && frac1.numerator == 0 && frac1.denominator == 0 && whilefunc || frac1.fullpart == 0 && whilefunc) { whilefunc = false; }
 	if (whilefunc) { tif(showtext, whilefunc); }
 }
 
@@ -612,6 +633,7 @@ void findgcd(bool showtext, bool whilefunc) {
 	if (showtext) cout << "Введите второе число: ";
 	cin >> b;
 	if (gcd(a, b) == 1 && showtext) cout << "Взаимно простые числа, либо же НОД = 1" << endl;
+	else if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
 	else {
 		if (showtext) cout << "Ответ: " << gcd(a, b) << endl;
 		else cout << gcd(a, b) << endl;
@@ -619,7 +641,7 @@ void findgcd(bool showtext, bool whilefunc) {
 		cout << b << "/" << gcd(a, b) << "=" << b / gcd(a, b) << endl;
 	}
 
-	if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
+	
 	if (whilefunc) { findgcd(showtext, whilefunc); }
 }
 
@@ -630,13 +652,13 @@ void findlcm(bool showtext, bool whilefunc) {
 	cin >> a;
 	if (showtext) cout << "Введите второе число: ";
 	cin >> b;
-
-	if (showtext) cout << "Ответ: " << lcm(a, b) << endl;
-	else cout << lcm(a, b) << endl;
-	cout << lcm(a, b) << "/" << a << "=" << lcm(a, b) / a << endl;
-	cout << lcm(a, b) << "/" << b << "=" << lcm(a, b) / b << endl;
-
 	if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
+	else {
+		if (showtext) cout << "Ответ: " << endl;
+		else cout << lcm(a, b) << endl;
+		cout << lcm(a, b) << "/" << a << "=" << lcm(a, b) / a << endl;
+		cout << lcm(a, b) << "/" << b << "=" << lcm(a, b) / b << endl;
+	}
 	if (whilefunc) { findlcm(showtext, whilefunc); }
 }
 
@@ -663,15 +685,11 @@ void findprop3(bool showtext, bool whilefunc) {
 	if (showtext) cout << "Введите знаменатель третьей дроби: ";
 	cin >> frac3.denominator;
 
-	result = prop3(frac1, frac2, frac3);
-	if (showtext) cout << "Целая часть: " << result.fullpart << " " << endl;
-	else cout << result.fullpart << " ";
-	if (showtext) cout << "Числитель: " << result.numerator << "/" << endl;
-	else cout << result.numerator << " ";
-	if (showtext) cout << "Знаменатель: " << result.denominator << endl;
-	else cout << result.denominator << endl;
-
 	if (frac1.fullpart == 0 && frac1.numerator == 0 && frac1.denominator == 0 && frac2.fullpart == 0 && frac2.numerator == 0 && frac2.denominator == 0 && frac3.fullpart == 0 && frac3.numerator == 0 && frac3.denominator == 0 && whilefunc) { whilefunc = false; }
+	else {
+		result = prop3(frac1, frac2, frac3);
+		result.print();
+	}
 	if (whilefunc) { findprop3(showtext, whilefunc); }
 }
 
@@ -727,45 +745,49 @@ void ian2(bool showtext, bool whilefunc) {
 	if (showtext) cout << "Введите второе число: ";
 	cin >> number2;
 
-	if (showtext) cout << "Сложение чисел: ";
-	cout << number1 + number2 << endl;
-	if (showtext) cout << "Вычитание чисел: ";
-	cout << number1 - number2 << endl;
-	if (showtext) cout << "Умножение чисел: ";
-	cout << number1 * number2 << endl;
-	if (showtext) cout << "Деление чисел: ";
-	cout << number1 / number2 << endl;
-	if (showtext) cout << "Остаток от деления: ";
-	cout << (int)number1 % (int)number2 << endl;
+	if (number1 == 0 && number2 == 0 && whilefunc) { whilefunc = false; }
+	else {
 
-	if (showtext) cout << "НОД: ";
-	cout << gcd(number1, number2) << endl;
-	
-	if (showtext) cout << "НОК: ";
-	cout << lcm(number1, number2) << endl;
 
-	if (gcd(number1, number2) != 1) {
-		if (showtext) cout << number1 << " / " << gcd(number1, number2) << ": ";
-		cout << number1 / gcd(number1, number2) << endl;
-		if (showtext) cout << number2 << " / " << gcd(number1, number2) << ": ";
-		cout << number2 / gcd(number1, number2) << endl;
+		if (showtext) cout << "Сложение чисел: ";
+		cout << number1 + number2 << endl;
+		if (showtext) cout << "Вычитание чисел: ";
+		cout << number1 - number2 << endl;
+		if (showtext) cout << "Умножение чисел: ";
+		cout << number1 * number2 << endl;
+		if (showtext) cout << "Деление чисел: ";
+		cout << number1 / number2 << endl;
+		if (showtext) cout << "Остаток от деления: ";
+		cout << (int)number1 % (int)number2 << endl;
+
+		if (showtext) cout << "НОД: ";
+		cout << gcd(number1, number2) << endl;
+
+		if (showtext) cout << "НОК: ";
+		cout << lcm(number1, number2) << endl;
+
+		if (gcd(number1, number2) != 1) {
+			if (showtext) cout << number1 << " / " << gcd(number1, number2) << ": ";
+			cout << number1 / gcd(number1, number2) << endl;
+			if (showtext) cout << number2 << " / " << gcd(number1, number2) << ": ";
+			cout << number2 / gcd(number1, number2) << endl;
+		}
+
+		if (showtext) cout << lcm(number1, number2) << " / " << number1 << ": ";
+		cout << lcm(number1, number2) / number1 << endl;
+		if (showtext) cout << lcm(number1, number2) << " / " << number2 << ": ";
+		cout << lcm(number1, number2) / number2 << endl;
+
+		if (showtext) cout << number2 << " Корень " << number1 << ": ";
+		cout << pow(number1, 1.0 / number2) << endl;
+
+		if (showtext) cout << number1 << "^" << number2 << ": ";
+		cout << pow(number1, number2) << endl;
+
+		if (showtext) cout << "Умноженное сложение чисел: ";
+		cout << sumOfDigits(number1 * number2) << endl;
 	}
 	
-	if (showtext) cout << lcm(number1, number2) << " / " << number1 << ": ";
-	cout << lcm(number1, number2) / number1 << endl;
-	if (showtext) cout << lcm(number1, number2) << " / " << number2 << ": ";
-	cout << lcm(number1, number2) / number2 << endl;
-	
-	if (showtext) cout << number2 << " Корень " << number1 << ": ";
-	cout << pow(number1, 1.0 / number2) << endl;
-
-	if (showtext) cout << number1 << "^" << number2 << ": ";
-	cout << pow(number1, number2) << endl;
-
-	if (showtext) cout << "Умноженное сложение чисел: ";
-	cout << sumOfDigits(number1 * number2) << endl;
-
-	if (number1 == 0 && number2 == 0 && whilefunc) { whilefunc = false; }
 	if (whilefunc) { ian2(showtext, whilefunc); }
 }
 
@@ -908,28 +930,32 @@ void consolemenu() {
 		findrt(showtext, whilefunc);
 	else if (action == "mo")
 		mo(showtext, whilefunc);
+	else if (action == "sqrt")
+		findsqrt(showtext, whilefunc);
+	else if (action == "cbrt")
+		findcbrt(showtext, whilefunc);
 	else if (action == "exit")
 		exit(0);
 
-	else if (action == "showtext") {
+	else if (action == "showtext" || action == "st") {
 		cout << "Подсказки в функциях были включены" << endl;
 		showtext = true;
 	}
-	else if (action == "disabletext") {
+	else if (action == "disabletext" || action == "dt") {
 		cout << "Подсказки в функциях были отключены" << endl;
 		showtext = false;
 	}
-	else if (action == "checktext")
+	else if (action == "checktext" || action == "ct")
 		cout << showtext << endl;
-	else if (action == "enablewhilefunc") {
+	else if (action == "enablewhilefunc" || action == "ewf") {
 		cout << "Повторение функций включено" << endl;
 		whilefunc = true;
 	}
-	else if (action == "disablewhilefunc") {
+	else if (action == "disablewhilefunc" || action == "dwf") {
 		cout << "Повторение функций отключено" << endl;
 		whilefunc = false;
 	}
-	else if (action == "checkwhilefunc")
+	else if (action == "checkwhilefunc" || action == "cwf")
 		cout << whilefunc << endl;
 
 	consolemenu();
