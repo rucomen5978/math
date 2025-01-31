@@ -4,10 +4,12 @@
 #include <vector>
 #include <string>
 #include <cmath>
-#include <Windows.h>
+//#include <Windows.h>
 #include "header.h"
 
 #define inst <<"Инструкция по использованию"<<
+#define def1 else if (action == 
+#define def2 (showtext,whilefunc)
 
 using namespace std;
 bool showtext = false;
@@ -17,7 +19,7 @@ bool whilefunc = false;
 
 //helpcalc
 // аббр. help calculator
-void helpcalc() { 
+void helpcalc() {
 	cout << "Ну тут наверное ничего интересного не будет, разве что про операторы буду тут рассказывать." << endl;
 	cout << "Начну скорее всего то что сейчас данная версия калькулятора поддерживает только одно действие, и о типах действии сейчас расскажу." << endl;
 	cout << "+ <- Сложение чисел, ну тут наверное и так всё ясно, вводим в программу например 5+5 и в ответ получаем 10." << endl;
@@ -188,7 +190,7 @@ void helpftf() {
 
 //helpian
 // аббр. info about number
-void helpian(){
+void helpian() {
 	cout << "Эта функция позволяет выводить некоторые данные о числе. От нас требуется лишь ввести одно число." << endl;
 	cout << "Тут легче всего наверное вам будет включить подсказки, потому что вам будет тяжело понимать что и где" << endl;
 	cout << "Первый параметр это квадрат числа, ну тут ясно, число умноженное на себя два раза." << endl;
@@ -272,7 +274,7 @@ void helpwhilefunc() {
 //help
 void help() {
 	cout << "Руководство использования программы: " << endl;
-	
+
 	cout << "helpcalc <- " inst " калькулятора" << endl;
 	cout << "helpcalcperc <- " inst " калькулятора процентов" << endl;
 	cout << "helptdap <-" inst " превращения дроби в десятичную и проценты" << endl;
@@ -545,7 +547,7 @@ void itm(bool showtext, bool whilefunc) {
 		result = improperToMixed(user.numerator, user.denominator);
 		result.print();
 	}
-	
+
 	if (whilefunc) { itm(showtext, whilefunc); }
 }
 
@@ -580,17 +582,17 @@ void calcfrac(bool showtext, bool whilefunc) {
 			if (showtext) cout << "Ответ: ";
 			c.print();
 		}
-		else if (action == '-') {
+		def1  '-') {
 			c = subFraction(a, b, itm, reduce);
 			if (showtext) cout << "Ответ: ";
 			c.print();
 		}
-		else if (action == '*') {
+		def1  '*') {
 			c = mulFraction(a, b, itm, reduce);
 			if (showtext) cout << "Ответ: ";
 			c.print();
 		}
-		else if (action == '/') {
+		def1  '/') {
 			c = divFraction(a, b, itm, reduce);
 			if (showtext) cout << "Ответ: ";
 			c.print();
@@ -641,7 +643,7 @@ void findgcd(bool showtext, bool whilefunc) {
 		cout << b << "/" << gcd(a, b) << "=" << b / gcd(a, b) << endl;
 	}
 
-	
+
 	if (whilefunc) { findgcd(showtext, whilefunc); }
 }
 
@@ -726,7 +728,7 @@ void ian(bool showtext, bool whilefunc) {
 
 	if (showtext) cout << "Корень самого себя: \t\t";
 	cout << pow(number, 1.0 / number) << endl;
-	
+
 	if (showtext) cout << "1 Делённый на число: \t\t";
 	cout << 1 / number << endl;
 
@@ -787,7 +789,7 @@ void ian2(bool showtext, bool whilefunc) {
 		if (showtext) cout << "Умноженное сложение чисел: ";
 		cout << sumOfDigits(number1 * number2) << endl;
 	}
-	
+
 	if (whilefunc) { ian2(showtext, whilefunc); }
 }
 
@@ -831,7 +833,7 @@ void mo(bool showtext, bool whilefunc) {
 	if (showtext) cout << "Количество чисел: ";
 	cin >> count;
 	int i = 1;
-	while (i != count+1) {
+	while (i != count + 1) {
 		cout << number * i << " ";
 		i++;
 	}
@@ -841,121 +843,211 @@ void mo(bool showtext, bool whilefunc) {
 	if (whilefunc) { mo(showtext, whilefunc); }
 }
 
+void add(bool showtext, bool whilefunc) {
+	double a, b;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> a;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> b;
+	if (showtext) cout << "Результат сложения чисел: ";
+	cout << a + b << endl;
+	if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
+	if (whilefunc) { add(showtext, whilefunc); }
+}
+
+void mul(bool showtext, bool whilefunc) {
+	double a, b;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> a;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> b;
+	if (showtext) cout << "Результат умножения чисел: ";
+	cout << a * b << endl;
+	if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
+	if (whilefunc) { add(showtext, whilefunc); }
+}
+
+void div(bool showtext, bool whilefunc) {
+	double a, b;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> a;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> b;
+	if (showtext) cout << "Результат деления чисел: ";
+	cout << a / b << endl;
+	if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
+	if (whilefunc) { add(showtext, whilefunc); }
+}
+
+void sub(bool showtext, bool whilefunc) {
+	double a, b;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> a;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> b;
+	if (showtext) cout << "Результат вычитания чисел: ";
+	cout << a - b << endl;
+
+	if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
+	if (whilefunc) { add(showtext, whilefunc); }
+}
+
+void deg(bool showtext, bool whilefunc) {
+	double a, b;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> a;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> b;
+	if (showtext) cout << "Результат: ";
+	cout << pow(a, b) << endl;
+	if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
+	if (whilefunc) { add(showtext, whilefunc); }
+}
+
+void rod(bool showtext, bool whilefunc) {
+	double a, b;
+	if (showtext) cout << "Введите первое число: ";
+	cin >> a;
+	if (showtext) cout << "Введите второе число: ";
+	cin >> b;
+	if (showtext) cout << "Остаток от деления: ";
+	cout << static_cast<int>(a) % static_cast<int>(b) << endl;
+
+	if (a == 0 && b == 0 && whilefunc) { whilefunc = false; }
+	if (whilefunc) { add(showtext, whilefunc); }
+}
+
 void consolemenu() {
 	string action;
 	cout << ":";
 	cin >> action;
 	if (action == "helpcalc")
 		helpcalc();
-	else if (action == "helpcalcperc")
+	def1  "helpcalcperc")
 		helpcalcperc();
-	else if (action == "helptdap")
+	def1  "helptdap")
 		helptdap();
-	else if (action == "helpfd")
+	def1  "helpfd")
 		helpfd();
-	else if (action == "helpfp")
+	def1  "helpfp")
 		helpfp();
-	else if (action == "helpdtf")
+	def1  "helpdtf")
 		helpdtf();
-	else if (action == "helpitm")
+	def1  "helpitm")
 		helpitm();
-	else if (action == "helpcalcfrac")
+	def1  "helpcalcfrac")
 		helpcalcfrac();
-	else if (action == "helpgcd")
+	def1  "helpgcd")
 		helpgcd();
-	else if (action == "helplcm")
+	def1  "helplcm")
 		helplcm();
-	else if (action == "helptif")
+	def1  "helptif")
 		helptif();
-	else if (action == "helpprop3")
+	def1  "helpprop3")
 		helpprop3();
-	else if (action == "helpftf")
+	def1  "helpftf")
 		helpftf();
-	else if (action == "helpian")
+	def1  "helpian")
 		helpian();
-	else if (action == "helpian2")
+	def1  "helpian2")
 		helpian2();
-	else if (action == "helpsod")
+	def1  "helpsod")
 		helpsod();
-	else if (action == "helprt")
+	def1  "helprt")
 		helprt();
-	else if (action == "helpmo")
+	def1  "helpmo")
 		helpmo();
-	else if (action == "helpwhilefunc")
+	def1  "helpwhilefunc")
 		helpwhilefunc();
-	else if (action == "helpshowtext")
+	def1  "helpshowtext")
 		helpshowtext();
 
 
-	else if (action == "github")
+	def1 "github")
 		github();
 
-	else if (action == "help")
+	def1 "help")
 		help();
-	else if (action == "calc")
-		calc(showtext, whilefunc);
-	else if (action == "calcperc")
-		calcperc(showtext, whilefunc);
-	else if (action == "tdap")
-		tdap(showtext, whilefunc);
-	else if (action == "fd")
-		findDivisors(showtext, whilefunc);
-	else if (action == "fp")
-		findPrime(showtext, whilefunc);
-	else if (action == "dtf")
-		dtf(showtext, whilefunc);
-	else if (action == "itm")
-		itm(showtext, whilefunc);
-	else if (action == "calcfrac")
-		calcfrac(showtext, whilefunc);
-	else if (action == "clear")
+	def1 "calc")
+		calc def2;
+	def1 "calcperc")
+		calcperc def2;
+	def1 "tdap")
+		tdap def2;
+	def1 "fd")
+		findDivisors def2;
+	def1 "fp")
+		findPrime def2;
+	def1 "dtf")
+		dtf def2;
+	def1  "itm")
+		itm def2;
+	def1  "calcfrac")
+		calcfrac def2;
+	def1  "clear")
 		system("cls");
-	else if (action == "tif")
-		tif(showtext, whilefunc);
-	else if (action == "gcd")
-		findgcd(showtext, whilefunc);
-	else if (action == "lcm")
-		findlcm(showtext, whilefunc);
-	else if (action == "prop3")
-		findprop3(showtext, whilefunc);
-	else if (action == "ftf")
-		ftf(showtext, whilefunc);
-	else if (action == "ian")
-		ian(showtext, whilefunc);
-	else if (action == "ian2")
-		ian2(showtext, whilefunc);
-	else if (action == "sod")
-		sod(showtext, whilefunc);
-	else if (action == "rt")
-		findrt(showtext, whilefunc);
-	else if (action == "mo")
-		mo(showtext, whilefunc);
-	else if (action == "sqrt")
-		findsqrt(showtext, whilefunc);
-	else if (action == "cbrt")
-		findcbrt(showtext, whilefunc);
-	else if (action == "exit")
+	def1  "tif")
+		tif def2;
+	def1  "gcd")
+		findgcd def2;
+	def1  "lcm")
+		findlcm def2;
+	def1  "prop3")
+		findprop3 def2;
+	def1  "ftf")
+		ftf def2;
+	def1  "ian")
+		ian def2;
+	def1  "ian2")
+		ian2 def2;
+	def1  "sod")
+		sod def2;
+	def1  "rt")
+		findrt def2;
+	def1  "mo")
+		mo def2;
+	def1  "sqrt")
+		findsqrt def2;
+	def1  "cbrt")
+		findcbrt def2;
+
+	def1  "add")
+		add def2;
+	def1  "sub")
+		sub def2;
+	def1  "div")
+		div def2;
+	def1  "mul")
+		mul def2;
+	def1  "deg")
+		deg def2;
+	def1  "rod")
+		rod def2;
+	def1 "vcmode")
+		vcmode();
+
+	def1  "exit")
 		exit(0);
 
-	else if (action == "showtext" || action == "st") {
+	def1  "showtext" || action == "st") {
 		cout << "Подсказки в функциях были включены" << endl;
 		showtext = true;
 	}
-	else if (action == "disabletext" || action == "dt") {
+	def1  "disabletext" || action == "dt") {
 		cout << "Подсказки в функциях были отключены" << endl;
 		showtext = false;
 	}
-	else if (action == "checktext" || action == "ct")
+	def1  "checktext" || action == "ct")
 		cout << showtext << endl;
-	else if (action == "enablewhilefunc" || action == "ewf") {
+	def1  "enablewhilefunc" || action == "ewf") {
 		cout << "Повторение функций включено" << endl;
 		whilefunc = true;
 	}
-	else if (action == "disablewhilefunc" || action == "dwf") {
+	def1  "disablewhilefunc" || action == "dwf") {
 		cout << "Повторение функций отключено" << endl;
 		whilefunc = false;
 	}
-	else if (action == "checkwhilefunc" || action == "cwf")
+	def1  "checkwhilefunc" || action == "cwf")
 		cout << whilefunc << endl;
 
 	consolemenu();
