@@ -1,8 +1,28 @@
 #pragma once
 #include <vector>
+#include <string>
 #include <iostream>
 int center(int window, int object);
 bool isPrime(int num);
+
+#define CH_s 115
+#define CH_S 83
+#define CH_sS ch==115||ch==83
+
+#define CH_a 97
+#define CH_A 65
+#define CH_aA ch==97||ch == 65
+
+#define CH_d 100
+#define CH_D 68
+#define CH_dD ch==100||ch==68
+
+#define CH_w 119
+#define CH_W 87
+#define CH_wW ch==119||ch==87
+
+#define CH_enter 13
+#define cls system("cls")
 
 // Объявление функции для нахождения НОД
 int gcd(int a, int b);
@@ -27,10 +47,8 @@ struct Fraction {
 
     // В неправильную дробь
     void toImproperFraction() {
-        if (fullpart != 0) {
-            numerator = fullpart * denominator + numerator;
-            fullpart = 0;
-        }
+        numerator = fullpart * denominator + numerator;
+        fullpart = 0;
     }
 
     void toMixedFraction() {
@@ -56,6 +74,26 @@ struct Fraction {
         std::cout << std::endl;
     }
 
+};
+
+struct doubleFraction {
+    double fullpart = 0;
+    double numerator = 0;
+    double denominator = 0;
+    double ntmb = 0;
+    void toImproperFraction() {
+        numerator = fullpart * denominator + numerator;
+        fullpart = 0;
+    }
+    void print() {
+        if (fullpart != 0)
+            std::cout << fullpart << " ";
+        if (numerator != 0)
+            std::cout << numerator << "/" << denominator;
+        if (fullpart == 0 && numerator == 0)
+            std::cout << 0;
+        std::cout << std::endl;
+    }
 };
 
 Fraction decimalToFraction(double decimal);
@@ -86,3 +124,5 @@ double rt(double number, double root);
 
 //Консольный режим
 void consolemenu();
+
+void vcmode();
